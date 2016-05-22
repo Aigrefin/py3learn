@@ -53,3 +53,15 @@ class LearnViewsTests(TestCase):
 
         # Then
         self.assertRedirects(response, reverse('learn:dictionaries'))
+
+    def test_mainTitle_shouldRedirectToHome(self):
+        # When
+        response = self.client.get(reverse('learn:dictionaries'))
+
+        # Then
+        self.assertEqual(response.status_code, 200)
+        self.assertInHTML(
+                '<a href="' +
+                reverse('learn:index') +
+                '" class="brand-logo">Learn.</a>',
+                response.content.decode('utf8'))
