@@ -1,5 +1,6 @@
 # Projet related
 *.sqlite3
+utils/
 
 # Django default .gitignore
 *.egg-info
