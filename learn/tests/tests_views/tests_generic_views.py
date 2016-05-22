@@ -46,3 +46,10 @@ class LearnViewsTests(TestCase):
                          [translation1,
                           translation2,
                           translation3])
+
+    def test_shouldRedirect_ToDictionaries(self):
+        # When
+        response = self.client.get(reverse('learn:index'))
+
+        # Then
+        self.assertRedirects(response, reverse('learn:dictionaries'))

@@ -5,6 +5,8 @@ from . import views
 app_name = 'learn'
 
 urlpatterns = [
+    url(r'^$',
+        views.index, name='index'),
     url(r'^dictionaries/?$',
         views.DictionariesView.as_view(), name='dictionaries'),
     url(r'^dictionaries/(?P<pk>[0-9]+)/translations?$',

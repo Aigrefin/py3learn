@@ -6,6 +6,10 @@ from .infrastructure.strings import caseless_equal
 from .models import Dictionary, Translation
 
 
+def index(request):
+    return redirect('learn:dictionaries')
+
+
 class DictionariesView(generic.ListView):
     model = Dictionary
     template_name = 'learn/dictionaries.html'
