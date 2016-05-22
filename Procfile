@@ -1,1 +1,1 @@
-web: gunicorn py3learn.wsgi
+web: gunicorn py3learn.wsgi --log-file -
