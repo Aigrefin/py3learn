@@ -96,3 +96,21 @@ class ExerciseTests(TestCase):
         self.assertInHTML(
                 """<div class="card-panel red lighten-3">This field is required.</div>""",
                 response.content.decode('utf8'))
+
+    def test_shouldContainWordImportance(self):
+        # Given
+        dictionary = Dictionary.objects.create(language='TestLang')
+        translation = Translation.objects.create(dictionary=dictionary,
+                                                 known_word='TestKnown',
+                                                 word_to_learn='TestLearn',
+                                                 importance=Translation.SHOULD_KNOW)
+        url_parameters = {'dictionary_pk': dictionary.id,
+                          'translation_pk': translation.id}
+
+        # When
+        response = self.client.get(reverse('learn:exercise', kwargs=url_parameters))
+
+        # Then
+        self.assertInHTML("""<div class="col s12">
+                            French (Should know):
+                        </div>""", response.content.decode('utf8'))
