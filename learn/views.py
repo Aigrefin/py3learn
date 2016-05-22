@@ -38,8 +38,7 @@ def validate_exercise(request, dictionary_pk, translation_pk):
     if caseless_equal(translation.word_to_learn, form.cleaned_data['answer']):
         return redirect('learn:randomise_exercise', dictionary_pk=dictionary_pk)
     else:
-        return redirect('learn:exercise_wrong_answer', dictionary_pk=dictionary_pk, translation_pk=translation_pk,
-                        wrong_answer='wrong_answer')
+        return redirect('learn:exercise_wrong_answer', dictionary_pk=dictionary_pk, translation_pk=translation_pk)
 
 
 def exercise(request, dictionary_pk, translation_pk, wrong_answer=False, bad_input=False):
@@ -51,3 +50,12 @@ def exercise(request, dictionary_pk, translation_pk, wrong_answer=False, bad_inp
         'bad_input': bad_input != False,
     }
     return render(request, 'learn/exercise.html', context=context)
+
+
+def exercise_wrong_answer(request, dictionary_pk, translation_pk):
+    context = {
+        'dictionary_pk': dictionary_pk,
+        'translation_pk': translation_pk,
+        'translation': Translation.objects.get(pk=translation_pk),
+    }
+    return render(request, 'learn/exercise_wrong_answer.html', context=context)

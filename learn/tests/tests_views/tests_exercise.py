@@ -41,35 +41,6 @@ class ExerciseTests(TestCase):
                 '" class="waves-effect waves-light btn">Next</a>',
                 response.content.decode('utf8'))
 
-    def test_shouldRenderExercise_WithoutAnswerInput_WithAnswerText_WhenWrongAnswer(self):
-        # Given
-        dictionary = Dictionary.objects.create(language='TestLang')
-        translation = Translation.objects.create(dictionary=dictionary,
-                                                 known_word='TestKnown',
-                                                 word_to_learn='TestLearn')
-        url_parameters = {'dictionary_pk': dictionary.id,
-                          'translation_pk': translation.id,
-                          'wrong_answer': 'wrong_answer'}
-
-        # When
-        response = self.client.get(reverse('learn:exercise_wrong_answer', kwargs=url_parameters))
-
-        # Then
-        self.assertEqual(response.status_code, 200)
-        self.assertInHTML(
-                """<div class="col s12 card-panel">
-                    <p>TestKnown</p>
-                </div>""",
-                response.content.decode('utf8'))
-        self.assertInHTML(
-                """<div class="col s12 card-panel green lighten-3">
-                    <p>TestLearn</p>
-                </div>""",
-                response.content.decode('utf8'))
-        self.assertInHTML(
-                '<input placeholder="Translate the word!" id="answer" name="answer" type="text" class="validate">',
-                response.content.decode('utf8'), count=0)
-
     def test_shouldRenderExercise_WithAnswerInput_WithBadInputText_WhenBadInput(self):
         # Given
         dictionary = Dictionary.objects.create(language='TestLang')

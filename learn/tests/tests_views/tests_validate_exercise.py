@@ -61,7 +61,6 @@ class ValidateExerciseTests(TestCase):
         self.assertRedirects(response, reverse('learn:exercise_wrong_answer', kwargs={
             'dictionary_pk': dictionary.id,
             'translation_pk': translation.id,
-            'wrong_answer': 'wrong_answer'
         }))
 
     def test_shouldRedirect_ToRandomiseExercise_WhenAnswerEqualsWordToLearn(self):

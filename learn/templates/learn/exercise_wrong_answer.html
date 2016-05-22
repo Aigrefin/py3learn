@@ -1,0 +1,26 @@
+{% extends "learn/base.html" %}
+{% block content %}
+    <h3>{{ translation.dictionary.language }}</h3>
+    <div class="row">
+        <div class="col s12">
+            French ({{ translation.get_importance_str }}):
+        </div>
+        <div class="col s12 card-panel">
+            <p>{{ translation.known_word }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            The answer was :
+        </div>
+        <div class="col s12 card-panel green lighten-3">
+            <p>{{ translation.word_to_learn }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            <a href="{% url 'learn:randomise_exercise' dictionary_pk=translation.dictionary.id %}"
+               class="waves-effect waves-light btn">Next</a>
+        </div>
+    </div>
+{% endblock content %}
