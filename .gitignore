@@ -1,6 +1,7 @@
 # Projet related
 *.sqlite3
 utils/
+py3learn/staticfiles/
 
 # Django default .gitignore
 *.egg-info

@@ -114,8 +114,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATIC_URL = '/static/'
 
@@ -123,6 +121,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, '../learn/static'),
 )
+
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 X_FRAME_OPTIONS = 'DENY'
 CSRF_COOKIE_HTTPONLY = True
