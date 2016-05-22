@@ -1,0 +1,21 @@
+{% extends "learn/base.html" %}
+{% block content %}
+    <h2>Available Dictionaries</h2>
+    <div class="row">
+        <div class="col s12 card-panel">
+            {% if dictionaries_list %}
+                <ul class="collection">
+                    {% for dictionary in dictionaries_list %}
+                        <li class="collection-item">
+                            <a href="{% url 'learn:translations' dictionary.id %}">{{ dictionary.language }}</a>
+                            <a href="{% url 'learn:randomise_exercise' dictionary_pk=dictionary.id %}"
+                               class="secondary-content">Exercise !</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No dictionary are available.</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}

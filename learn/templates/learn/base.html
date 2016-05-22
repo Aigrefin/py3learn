@@ -1,0 +1,43 @@
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <title>Learn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <!--link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"-->
+    <link rel="stylesheet" href="{% static "learn/css/materialize-icons.css" %}">
+    <link rel="stylesheet" href="{% static "learn/css/materialize.min.css" %}">
+
+    <script type="text/javascript" src="{% static "learn/js/jquery-2.2.4.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "learn/js/materialize.min.js" %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".button-collapse").sideNav();
+        })
+    </script>
+
+</head>
+
+<body>
+<div class="container">
+    <div class="row">
+        <nav>
+            <div class="nav-wrapper">
+                <div class="col s12">
+                    <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+                    <a href="#" class="brand-logo">Learn.</a>
+                    <ul class="right hide-on-med-and-down">
+                        <li><a href="{% url 'learn:dictionaries' %}">Dictionaries</a></li>
+                    </ul>
+                    <ul class="side-nav" id="mobile-demo">
+                        <li><a href="{% url 'learn:dictionaries' %}">Dictionaries</a></li>
+                    </ul>
+                    {% comment %}<ul id="nav-mobile" class="right hide-on-med-and-down">
+                        <li><a href="{% url 'learn:dictionaries' %}">Dictionaries</a></li>
+                    </ul>{% endcomment %}
+                </div>
+            </div>
+        </nav>
+    </div>
+    {% block content %}{% endblock %}
+</div>
+</body>
