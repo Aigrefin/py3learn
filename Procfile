@@ -1,1 +1,1 @@
-web: gunicorn py3learn.wsgi --log-file -
+web: python manage.py migrate;gunicorn py3learn.wsgi --log-file -
