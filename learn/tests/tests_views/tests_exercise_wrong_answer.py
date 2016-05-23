@@ -22,7 +22,7 @@ class ExerciseWrongAnswerTests(TestCase):
         # Then
         self.assertEqual(response.status_code, 200)
         self.assertInHTML(
-                """<div class="col s12 card-panel green lighten-3">
+                """<div class="col s12 card-panel red lighten-4">
                     <p>TestLearn</p>
                 </div>""",
                 response.content.decode('utf8'))
@@ -46,3 +46,19 @@ class ExerciseWrongAnswerTests(TestCase):
         self.assertInHTML("""<div class="col s12">
                                 French (Should know):
                             </div>""", response.content.decode('utf8'))
+
+    def test_shouldContainRetypeFields(self):
+        # When
+        response = self.client.get(reverse('learn:exercise_wrong_answer', kwargs=self.url_parameters))
+
+        # Then
+        self.assertInHTML(
+                """
+                <div class="row">
+                    <div class="input-field col s6">
+                        <input placeholder="Translate the word!" id="answer" name="answer" type="text"
+                               class="validate">
+                        <label for="answer">Retype to continue</label>
+                    </div>
+                </div>
+                """, response.content.decode('utf-8'))
