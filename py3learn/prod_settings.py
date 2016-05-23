@@ -140,3 +140,16 @@ SECURE_HSTS_SECONDS = 1
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 DATABASES['default'] = dj_database_url.config()
+
+# Cache
+os.environ['MEMCACHE_SERVERS'] = os.environ['MEMCACHEDCLOUD_SERVERS'].replace(',', ';')
+os.environ['MEMCACHE_USERNAME'] = os.environ['MEMCACHEDCLOUD_USERNAME']
+os.environ['MEMCACHE_PASSWORD'] = os.environ['MEMCACHEDCLOUD_PASSWORD']
+CACHES = {
+    'default': {
+        'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
+        'TIMEOUT': 500,
+        'BINARY': True,
+        'OPTIONS': { 'tcp_nodelay': True }
+    }
+}
