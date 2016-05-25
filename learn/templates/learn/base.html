@@ -18,37 +18,50 @@
 </head>
 
 <body>
-<div class="container">
-    <div class="row">
-        <nav>
-            <div class="nav-wrapper">
-                <div class="col s12">
-                    <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
-                    <a href="{% url 'learn:index' %}" class="brand-logo">Learn.</a>
-                    <ul class="right hide-on-med-and-down">
-                        <li><a href="{% url 'learn:dictionaries' %}">Dictionaries</a></li>
-                        <li><a href="/admin">Administration</a></li>
-                        {% if user.is_authenticated %}
-                            <li><a href="{% url 'learn:logout' %}">Log out</a></li>
-                        {% else %}
-                            <li><a href="{% url 'learn:signin' %}">Sign in</a></li>
-                            <li><a href="{% url 'learn:login' %}">Log in</a></li>
-                        {% endif %}
-                    </ul>
-                    <ul class="side-nav" id="mobile-demo">
-                        <li><a href="{% url 'learn:dictionaries' %}">Dictionaries</a></li>
-                        <li><a href="/admin">Administration</a></li>
-                        {% if user.is_authenticated %}
-                            <li><a href="{% url 'learn:logout' %}">Log out</a></li>
-                        {% else %}
-                            <li><a href="{% url 'learn:signin' %}">Sign in</a></li>
-                            <li><a href="{% url 'learn:login' %}">Log in</a></li>
-                        {% endif %}
-                    </ul>
+<main>
+    <div class="container">
+        <div class="row">
+            <nav>
+                <div class="nav-wrapper">
+                    <div class="col s12">
+                        <a href="#" data-activates="mobile-demo" class="button-collapse"><i
+                                class="material-icons">menu</i></a>
+                        <a href="{% url 'learn:index' %}" class="brand-logo">Learn.</a>
+                        <ul class="right hide-on-med-and-down">
+                            <li><a href="{% url 'learn:dictionaries' %}">Dictionaries</a></li>
+                            <li><a href="/admin">Administration</a></li>
+                            {% if user.is_authenticated %}
+                                <li><a href="{% url 'learn:logout' %}">Log out</a></li>
+                            {% else %}
+                                <li><a href="{% url 'learn:signin' %}">Sign in</a></li>
+                                <li><a href="{% url 'learn:login' %}">Log in</a></li>
+                            {% endif %}
+                        </ul>
+                        <ul class="side-nav" id="mobile-demo">
+                            <li><a href="{% url 'learn:dictionaries' %}">Dictionaries</a></li>
+                            <li><a href="/admin">Administration</a></li>
+                            {% if user.is_authenticated %}
+                                <li><a href="{% url 'learn:logout' %}">Log out</a></li>
+                            {% else %}
+                                <li><a href="{% url 'learn:signin' %}">Sign in</a></li>
+                                <li><a href="{% url 'learn:login' %}">Log in</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        {% block content %}{% endblock %}
+        <footer class="page-footer">
+            <div class="footer-copyright">
+                <div class="container">
+                    Learn.
+                    <a class="grey-text text-lighten-4 right" href="https://github.com/Aigrefin/py3learn/issues"
+                       target="_blank">Issues ?</a>
                 </div>
             </div>
-        </nav>
+        </footer>
     </div>
-    {% block content %}{% endblock %}
-</div>
+
+</main>
 </body>
