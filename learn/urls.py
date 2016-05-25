@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from learn.views import signin
+from learn.views import signin, exercise
 from .views import views
 
 app_name = 'learn'
@@ -14,13 +14,13 @@ urlpatterns = [
     url(r'^dictionaries/(?P<pk>[0-9]+)/translations?$',
         views.TranslationsView.as_view(), name='translations'),
     url(r'^dictionaries/(?P<dictionary_pk>[0-9]+)/exercises$',
-        views.randomise_exercise, name='randomise_exercise'),
+        exercise.randomise_exercise, name='randomise_exercise'),
     url(r'^dictionaries/(?P<dictionary_pk>[0-9]+)/exercises/(?P<translation_pk>[0-9]+)$',
-        views.exercise, name='exercise'),
+        exercise.exercise, name='exercise'),
     url(r'^dictionaries/(?P<dictionary_pk>[0-9]+)/exercises/(?P<translation_pk>[0-9]+)/wrong_answer$',
-        views.exercise_wrong_answer, name='exercise_wrong_answer'),
+        exercise.exercise_wrong_answer, name='exercise_wrong_answer'),
     url(r'^dictionaries/(?P<dictionary_pk>[0-9]+)/exercises/(?P<translation_pk>[0-9]+)/(?P<bad_input>bad_input)$',
-        views.exercise, name='exercise_bad_input'),
+        exercise.exercise, name='exercise_bad_input'),
     url(r'^dictionaries/(?P<dictionary_pk>[0-9]+)/exercises/(?P<translation_pk>[0-9]+)/validate$',
-        views.validate_exercise, name='validate_exercise'),
+        exercise.validate_exercise, name='validate_exercise'),
 ]
