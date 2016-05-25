@@ -1,12 +1,14 @@
 from django.conf.urls import url
 
-from . import views
+from learn.views import signin
+from .views import views
 
 app_name = 'learn'
 
 urlpatterns = [
     url(r'^$',
         views.index, name='index'),
+    url(r'^signin/?$', signin.signin_view, name='signin'),
     url(r'^dictionaries/?$',
         views.DictionariesView.as_view(), name='dictionaries'),
     url(r'^dictionaries/(?P<pk>[0-9]+)/translations?$',

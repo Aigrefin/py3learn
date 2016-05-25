@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.views import generic
 
-from .forms import ExerciseForm
-from .infrastructure.strings import caseless_equal
-from .models import Dictionary, Translation
+from learn.forms import ExerciseForm
+from learn.infrastructure.strings import caseless_equal
+from learn.models import Dictionary, Translation
 
 
 def index(request):

@@ -140,3 +140,7 @@ SECURE_HSTS_SECONDS = 1
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 DATABASES['default'] = dj_database_url.config()
+
+# Cookie-bases Sessions
+SESSION_COOKIE_HTTPONLY = True
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
