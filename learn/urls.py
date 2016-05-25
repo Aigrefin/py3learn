@@ -1,6 +1,7 @@
 from django.conf.urls import url
+from django.contrib.auth.views import logout
 
-from learn.views import signin, exercise
+from learn.views import signin, exercise, login
 from .views import views
 
 app_name = 'learn'
@@ -9,6 +10,8 @@ urlpatterns = [
     url(r'^$',
         views.index, name='index'),
     url(r'^signin/?$', signin.signin_view, name='signin'),
+    url(r'^login/?$', login.login_view, name='login'),
+    url(r'^logout/$', logout,{'next_page': '/login'}, name='logout'),
     url(r'^dictionaries/?$',
         views.DictionariesView.as_view(), name='dictionaries'),
     url(r'^dictionaries/(?P<pk>[0-9]+)/translations?$',

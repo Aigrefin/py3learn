@@ -3,27 +3,27 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 
-class SigninTests(TestCase):
-    def test_shouldRouteToSigninPage(self):
+class LoginTests(TestCase):
+    def test_shouldRouteToLoginPage(self):
         # When
-        response = self.client.get(reverse('learn:signin'))
+        response = self.client.get(reverse('learn:login'))
 
         # Then
         self.assertEqual(response.status_code, 200)
-        self.assertInHTML("<h2>Sign in</h2>", response.content.decode('utf-8'))
+        self.assertInHTML("<h2>Log in</h2>", response.content.decode('utf-8'))
 
     def test_shouldFindLinkInNavbar(self):
         # When
-        response = self.client.get(reverse('learn:signin'))
+        response = self.client.get(reverse('learn:login'))
 
         # Then
-        self.assertInHTML("<li><a href=" + reverse('learn:signin') + ">Sign in</a></li>",
+        self.assertInHTML("<li><a href=" + reverse('learn:login') + ">Log in</a></li>",
                           response.content.decode('utf-8'),
                           count=2)
 
-    def test_shouldContainSigninForm(self):
+    def test_shouldContainLoginForm(self):
         # When
-        response = self.client.get(reverse('learn:signin'))
+        response = self.client.get(reverse('learn:login'))
 
         # Then
         self.assertInHTML(
@@ -32,15 +32,6 @@ class SigninTests(TestCase):
                         <div class="col s12">
                             <input id="username" name="username" type="text" placeholder="user name" value=""/>
                             <label for="username">User name</label>
-                        </div>
-                    </div>
-                """, response.content.decode('utf-8'))
-        self.assertInHTML(
-                """
-                    <div class="row">
-                        <div class="col s12">
-                            <input id="email" name="email" type="email" placeholder="you@example.com" value=""/>
-                            <label for="email">Email</label>
                         </div>
                     </div>
                 """, response.content.decode('utf-8'))
@@ -58,31 +49,30 @@ class SigninTests(TestCase):
                     <div class="row">
                         <div class="col s12">
                             <button class="btn waves-effect waves-light" type="submit" name="action">
-                                Sign in
+                                Log in
                                 <i class="material-icons right">fingerprint</i>
                             </button>
                         </div>
                     </div>
                 """, response.content.decode('utf-8'))
 
-    def test_shouldSendFormData_ToSignIn(self):
+    def test_shouldSendFormData_ToLogIn(self):
         # When
-        response = self.client.get(reverse('learn:signin'))
+        response = self.client.get(reverse('learn:login'))
 
         # Then
-        self.assertTrue('<form method="post" action="' + reverse('learn:signin') + '">'
+        self.assertTrue('<form method="post" action="' + reverse('learn:login') + '">'
                         in response.content.decode('utf8'))
 
     def test_shouldDisplayErrorText_WhenBadInput(self):
         # Given
         form_data = {
             'username': '',
-            'email': '',
             'password': '',
         }
 
         # When
-        response = self.client.post(reverse('learn:signin'), data=form_data)
+        response = self.client.post(reverse('learn:login'), data=form_data)
 
         # Then
         self.assertInHTML(
@@ -94,76 +84,74 @@ class SigninTests(TestCase):
         self.assertInHTML(
                 """
                     <div class="card-panel red lighten-4">
-                        Email:<br/>This field is required.<br/>
-                    </div>
-                """, response.content.decode('utf-8'))
-        self.assertInHTML(
-                """
-                    <div class="card-panel red lighten-4">
                         Password:<br/>This field is required.<br/>
                     </div>
                 """, response.content.decode('utf-8'))
 
-    def test_shouldRedirectToDictionaries_WhenSuccessfulySignedIn(self):
+    def test_shouldRedirectToDictionaries_WhenSuccessfulyLoggedIn(self):
         # Given
+        User.objects.create_user(username="someusername", password="mysecurepassword")
         form_data = {
             'username': 'someusername',
-            'email': 'test@domain.com',
             'password': 'mysecurepassword',
         }
 
         # When
-        response = self.client.post(reverse('learn:signin'), data=form_data)
+        response = self.client.post(reverse('learn:login'), data=form_data)
 
         # Then
         self.assertRedirects(response, reverse('learn:dictionaries'))
 
-    def test_shouldDisplayErrorText_WhenUsernameAlreadyExists(self):
+    def test_shouldDisplayErrorText_WhenBadUsernameIsGiven(self):
         # Given
         User.objects.create_user(username='someusername',
-                                 email='thing@dom.net',
-                                 password='apassword')
+                                 password='mysecurepassword')
         form_data = {
-            'username': 'someusername',
-            'email': 'test@domain.com',
+            'username': 'badusername',
             'password': 'mysecurepassword',
         }
 
         # When
-        response = self.client.post(reverse('learn:signin'), data=form_data)
+        response = self.client.post(reverse('learn:login'), data=form_data)
 
         # Then
         self.assertInHTML(
                 """
                     <div class="card-panel red lighten-4">
-                        Username:<br/>This username already exists.<br/>
+                        Login failed:<br/>User name and/or password are incorrect.<br/>
                     </div>
                 """, response.content.decode('utf-8'))
 
-    def test_shouldRegisterAccountInDatabase_WhenSuccessfulySignedIn(self):
-        form_data = {
-            'username': 'someusername',
-            'email': 'test@domain.com',
-            'password': 'mysecurepassword',
-        }
-
-        # When
-        self.client.post(reverse('learn:signin'), data=form_data)
-
-        # Then
-        self.assertTrue(User.objects.get(username='someusername'))
-
-    def test_shouldBeMarkedAsActive_WhenSuccessfulySignedIn(self):
+    def test_shouldDisplayErrorText_WhenBadPasswordIsGiven(self):
         # Given
+        User.objects.create_user(username='someusername',
+                                 password='mysecurepassword')
         form_data = {
             'username': 'someusername',
-            'email': 'some@email.com',
+            'password': 'badpassword',
+        }
+
+        # When
+        response = self.client.post(reverse('learn:login'), data=form_data)
+
+        # Then
+        self.assertInHTML(
+                """
+                    <div class="card-panel red lighten-4">
+                        Login failed:<br/>User name and/or password are incorrect.<br/>
+                    </div>
+                """, response.content.decode('utf-8'))
+
+    def test_shouldBeMarkedAsActive_WhenSuccessfulyLoggedIn(self):
+        # Given
+        user = User.objects.create_user(username="someusername", password="mysecurepassword")
+        form_data = {
+            'username': 'someusername',
             'password': 'mysecurepassword',
         }
 
         # When
-        response = self.client.post(reverse('learn:signin'), data=form_data)
+        self.client.post(reverse('learn:login'), data=form_data)
 
         # Then
-        user = User.objects.filter(username="someusername").first()
         self.assertEqual(int(self.client.session['_auth_user_id']), user.pk)
