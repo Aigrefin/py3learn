@@ -9,8 +9,10 @@
         <div class="col s12 card-panel">
             <p>{{ translation.known_word }}</p>
         </div>
+        {% if estimated_next_repetition %}
         <div class="col s2">Successes : {{ notation.successes }}</div>
         <div class="col s4">Next repetition : {{ estimated_next_repetition|naturaltime }}</div>
+        {% endif %}
     </div>
     <div class="row">
         <form class="col s12"
