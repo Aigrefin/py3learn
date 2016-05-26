@@ -17,7 +17,7 @@ urlpatterns = [
     url(r'^dictionaries/(?P<pk>[0-9]+)/translations?$',
         views.TranslationsView.as_view(), name='translations'),
     url(r'^dictionaries/(?P<dictionary_pk>[0-9]+)/exercises$',
-        exercise.randomise_exercise, name='randomise_exercise'),
+        exercise.choose_rythm_notation_exercise, name='choose_exercise'),
     url(r'^dictionaries/(?P<dictionary_pk>[0-9]+)/exercises/(?P<translation_pk>[0-9]+)$',
         exercise.exercise, name='exercise'),
     url(r'^dictionaries/(?P<dictionary_pk>[0-9]+)/exercises/(?P<translation_pk>[0-9]+)/wrong_answer$',

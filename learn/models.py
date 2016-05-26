@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -33,3 +34,10 @@ class Translation(models.Model):
         first_result = results[0]
         understandable_importance = first_result[1]
         return understandable_importance
+
+
+class RythmNotation(models.Model):
+    translation = models.ForeignKey(Translation, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    successes = models.BigIntegerField()
+    next_repetition = models.DateTimeField(auto_now_add=True)

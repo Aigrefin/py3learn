@@ -1,4 +1,5 @@
 {% extends "learn/base.html" %}
+{% load humanize %}
 {% block content %}
     <h3>{{ translation.dictionary.language }}</h3>
     <div class="row">
@@ -8,6 +9,8 @@
         <div class="col s12 card-panel">
             <p>{{ translation.known_word }}</p>
         </div>
+        <div class="col s2">Successes : {{ notation.successes }}</div>
+        <div class="col s4">Next repetition : {{ estimated_next_repetition|naturaltime }}</div>
     </div>
     <div class="row">
         <form class="col s12"
@@ -34,7 +37,7 @@
     </div>
     <div class="row">
         <div class="col s12">
-            <a href="{% url 'learn:randomise_exercise' dictionary_pk=translation.dictionary.id %}"
+            <a href="{% url 'learn:choose_exercise' dictionary_pk=translation.dictionary.id %}"
                class="waves-effect waves-light btn">Next</a>
         </div>
     </div>

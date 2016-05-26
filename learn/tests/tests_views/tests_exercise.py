@@ -1,7 +1,11 @@
+import datetime
+
+import django
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-from learn.models import Dictionary, Translation
+from learn.models import Dictionary, Translation, RythmNotation
+from learn.tests.tests_views.utilities import create_and_login_a_user
 
 
 class ExerciseTests(TestCase):
@@ -36,7 +40,7 @@ class ExerciseTests(TestCase):
                 response.content.decode('utf8'))"""
         self.assertInHTML(
                 '<a href="' +
-                reverse('learn:randomise_exercise',
+                reverse('learn:choose_exercise',
                         kwargs={'dictionary_pk': dictionary.id, }) +
                 '" class="waves-effect waves-light btn">Next</a>',
                 response.content.decode('utf8'))
@@ -85,3 +89,27 @@ class ExerciseTests(TestCase):
         self.assertInHTML("""<div class="col s12">
                             French (Should know):
                         </div>""", response.content.decode('utf8'))
+
+    def test_shouldContainWordSuccesses_ForThisUser(self):
+        # Given
+        user = create_and_login_a_user(self.client)
+        dictionary = Dictionary.objects.create(language='TestLang')
+        translation = Translation.objects.create(dictionary=dictionary,
+                                                 known_word='TestKnown',
+                                                 word_to_learn='TestLearn',
+                                                 importance=Translation.SHOULD_KNOW)
+        RythmNotation.objects.create(translation=translation,
+                                                      user=user,
+                                                      successes=3)
+        url_parameters = {'dictionary_pk': dictionary.id,
+                          'translation_pk': translation.id}
+
+        # When
+        response = self.client.get(reverse('learn:exercise', kwargs=url_parameters))
+
+        # Then
+        self.assertInHTML('<div class="col s2">Successes : 3</div>',
+                          response.content.decode('utf8'))
+        self.assertInHTML('<div class="col s4">Next repetition : 31 seconds from now</div>',
+                          response.content.decode('utf8'))
+

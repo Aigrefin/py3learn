@@ -8,7 +8,7 @@
                     {% for dictionary in dictionaries_list %}
                         <li class="collection-item">
                             <a href="{% url 'learn:translations' dictionary.id %}">{{ dictionary.language }}</a>
-                            <a href="{% url 'learn:randomise_exercise' dictionary_pk=dictionary.id %}"
+                            <a href="{% url 'learn:choose_exercise' dictionary_pk=dictionary.id %}"
                                class="secondary-content">Exercise !</a>
                         </li>
                     {% endfor %}
