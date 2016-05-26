@@ -113,7 +113,7 @@ class ExerciseTests(TestCase):
         self.assertInHTML('<div class="col s4">Next repetition : 31 seconds from now</div>',
                           response.content.decode('utf8'))
 
-    def test_shouldNotContainWordSuccesses_WhenNotLoggedin(self):
+    def test_shouldNotContainWordSuccesses_WhenNotLogin(self):
         # Given
         dictionary = Dictionary.objects.create(language='TestLang')
         translation = Translation.objects.create(dictionary=dictionary,
