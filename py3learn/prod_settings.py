@@ -148,16 +148,8 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
 # Email
-EMAIL_HOST = os.environ['MAILGUN_SMTP_SERVER']
-EMAIL_PORT = os.environ['MAILGUN_SMTP_PORT']
-EMAIL_HOST_USER = os.environ['MAILGUN_SMTP_LOGIN']
-EMAIL_HOST_PASSWORD = os.environ['MAILGUN_SMTP_PASSWORD']
-
-ANYMAIL = {
-    "MAILGUN_API_KEY": os.environ['MAILGUN_API_KEY'],
-}
-EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"
-DEFAULT_FROM_EMAIL = "no-reply@"+os.environ['MAILGUN_DOMAIN']
+LEARN_SMTP_PASSWORD = os.environ['LEARN_SMTP_PASSWORD']
+LEARN_SMTP_ADDRESS = os.environ['LEARN_SMTP_ADDRESS']
 
 LOGGING = {
     'version': 1,

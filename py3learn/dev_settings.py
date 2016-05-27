@@ -135,3 +135,6 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 # Email
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 1025
+
+LEARN_SMTP_PASSWORD = None
+LEARN_SMTP_ADDRESS = None
