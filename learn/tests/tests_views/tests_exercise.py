@@ -29,7 +29,7 @@ class ExerciseTests(TestCase):
                 </div>""",
                 response.content.decode('utf8'))
         self.assertInHTML(
-                '<input placeholder="Translate the word!" id="answer" name="answer" type="text" class="validate">',
+                '<input placeholder="Translate the word!" id="answer" name="answer" type="text" class="validate" autofocus>',
                 response.content.decode('utf8'))
         """self.assertInHTML(
                 '<form class="col s12" action="' +
@@ -66,7 +66,7 @@ class ExerciseTests(TestCase):
                 </div>""",
                 response.content.decode('utf8'))
         self.assertInHTML(
-                """<input placeholder="Translate the word!" id="answer" name="answer" type="text" class="validate invalid">""",
+                """<input placeholder="Translate the word!" id="answer" name="answer" type="text" class="validate invalid" autofocus>""",
                 response.content.decode('utf8'))
         self.assertInHTML(
                 """<div class="card-panel red lighten-3">This field is required.</div>""",
@@ -108,9 +108,11 @@ class ExerciseTests(TestCase):
         response = self.client.get(reverse('learn:exercise', kwargs=url_parameters))
 
         # Then
-        self.assertInHTML('<div class="col s2">Successes : 3</div>',
+        self.assertInHTML('<div class="col s12 hide-on-small-only"><h5>How\'s this going ?</h5></div>',
                           response.content.decode('utf8'))
-        self.assertInHTML('<div class="col s4">Next repetition : 31 seconds from now</div>',
+        self.assertInHTML('<div class="col s12"><b>Successes</b> : 3</div>',
+                          response.content.decode('utf8'))
+        self.assertInHTML('<div class="col s12"><b>Next repetition</b> : 31 seconds from now</div>',
                           response.content.decode('utf8'))
 
 

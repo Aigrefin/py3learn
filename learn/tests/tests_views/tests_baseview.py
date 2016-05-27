@@ -26,13 +26,3 @@ class BaseViewTests(TestCase):
         self.assertInHTML(
                 '<li><a href="' + reverse('learn:login') + '">Log in</a></li>', response.content.decode('utf8'),
                 count=0)
-
-    def test_shouldContainLinkToIssues(self):
-        # When
-        response = self.client.get(reverse('learn:dictionaries'))
-
-        # Then
-        self.assertInHTML(
-                '<a class="grey-text text-lighten-4 right" href="https://github.com/Aigrefin/py3learn/issues" target="_blank">Issues ?</a>',
-                response.content.decode('utf8')
-        )

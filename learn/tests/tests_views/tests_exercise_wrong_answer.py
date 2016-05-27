@@ -57,7 +57,7 @@ class ExerciseWrongAnswerTests(TestCase):
                 <div class="row">
                     <div class="input-field col s6">
                         <input placeholder="Translate the word!" id="answer" name="answer" type="text"
-                               class="validate">
+                               class="validate" autofocus>
                         <label for="answer">Retype to continue</label>
                     </div>
                 </div>
