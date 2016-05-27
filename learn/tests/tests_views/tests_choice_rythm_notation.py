@@ -7,31 +7,31 @@ from learn.models import Dictionary, Translation, RythmNotation
 from learn.services.choice import rythm_choice
 
 
+def createTranslations(dictionary, number, user):
+    translations = []
+    for i in range(number):
+        translation = Translation.objects.create(dictionary=dictionary,
+                                                 known_word='TestKnown' + str(i),
+                                                 word_to_learn='TestLearn' + str(i))
+        translations.append(translation)
+        RythmNotation.objects.create(user=user,
+                                     translation=translation,
+                                     successes=0,
+                                     next_repetition=timezone.now().replace(hour=i))
+    return translations
+
+
 class ChooseRythmNotationExerciseTests(TestCase):
     def test_shouldReturnFirstWord_WithRepetitionForToday(self):
         # Given
         user = User.objects.create_user(username='a', password='b')
         dictionary = Dictionary.objects.create(language='TestLang')
-        translation1 = Translation.objects.create(dictionary=dictionary,
-                                                  known_word='TestKnown1',
-                                                  word_to_learn='TestLearn1')
-        translation2 = Translation.objects.create(dictionary=dictionary,
-                                                  known_word='TestKnown2',
-                                                  word_to_learn='TestLearn2')
-        RythmNotation.objects.create(user=user,
-                                     translation=translation1,
-                                     successes=0,
-                                     next_repetition=timezone.now().replace(hour=0))
-        RythmNotation.objects.create(user=user,
-                                     translation=translation2,
-                                     successes=0,
-                                     next_repetition=timezone.now().replace(hour=1))
+        translation = createTranslations(dictionary, 6, user)[0]
 
         # When
         result = rythm_choice(user, dictionary)
-
         # Then
-        self.assertEqual(translation1, result)
+        self.assertEqual(result.rythmnotation_set.filter(user=user).first().next_repetition.day, timezone.now().day)
 
     def test_shouldPrepareBatchOfNeverSeenWords_BeforeReturningFirstWord_WithRepetitionForToday(self):
         # Given
@@ -40,15 +40,16 @@ class ChooseRythmNotationExerciseTests(TestCase):
         translation1 = Translation.objects.create(dictionary=dictionary,
                                                   known_word='TestKnown1',
                                                   word_to_learn='TestLearn1')
-        Translation.objects.create(dictionary=dictionary,
-                                                  known_word='TestKnown2',
-                                                  word_to_learn='TestLearn2')
+        translation2 = Translation.objects.create(dictionary=dictionary,
+                                   known_word='TestKnown2',
+                                   word_to_learn='TestLearn2')
 
         # When
         result = rythm_choice(user, dictionary)
 
         # Then
-        self.assertEqual(translation1, result)
+        self.assertTrue(result == translation1 or result == translation2)
+
 
     def test_shouldReturnNone_WhenNoWordForToday_AndNoNewWordCanBeAdded(self):
         # Given
