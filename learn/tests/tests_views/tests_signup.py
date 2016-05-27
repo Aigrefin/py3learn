@@ -3,27 +3,27 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 
-class SigninTests(TestCase):
-    def test_shouldRouteToSigninPage(self):
+class SignupTests(TestCase):
+    def test_shouldRouteToSignupPage(self):
         # When
-        response = self.client.get(reverse('learn:signin'))
+        response = self.client.get(reverse('learn:signup'))
 
         # Then
         self.assertEqual(response.status_code, 200)
-        self.assertInHTML("<h2>Sign in</h2>", response.content.decode('utf-8'))
+        self.assertInHTML("<h2>Sign up</h2>", response.content.decode('utf-8'))
 
     def test_shouldFindLinkInNavbar(self):
         # When
-        response = self.client.get(reverse('learn:signin'))
+        response = self.client.get(reverse('learn:signup'))
 
         # Then
-        self.assertInHTML("<li><a href=" + reverse('learn:signin') + ">Sign in</a></li>",
+        self.assertInHTML("<li><a href=" + reverse('learn:signup') + ">Sign up</a></li>",
                           response.content.decode('utf-8'),
                           count=2)
 
-    def test_shouldContainSigninForm(self):
+    def test_shouldContainSignupForm(self):
         # When
-        response = self.client.get(reverse('learn:signin'))
+        response = self.client.get(reverse('learn:signup'))
 
         # Then
         self.assertInHTML(
@@ -58,7 +58,7 @@ class SigninTests(TestCase):
                     <div class="row">
                         <div class="col s12">
                             <button class="btn waves-effect waves-light" type="submit" name="action">
-                                Sign in
+                                Sign up
                                 <i class="material-icons right">fingerprint</i>
                             </button>
                         </div>
@@ -67,10 +67,10 @@ class SigninTests(TestCase):
 
     def test_shouldSendFormData_ToSignIn(self):
         # When
-        response = self.client.get(reverse('learn:signin'))
+        response = self.client.get(reverse('learn:signup'))
 
         # Then
-        self.assertTrue('<form method="post" action="' + reverse('learn:signin') + '">'
+        self.assertTrue('<form method="post" action="' + reverse('learn:signup') + '">'
                         in response.content.decode('utf8'))
 
     def test_shouldDisplayErrorText_WhenBadInput(self):
@@ -82,7 +82,7 @@ class SigninTests(TestCase):
         }
 
         # When
-        response = self.client.post(reverse('learn:signin'), data=form_data)
+        response = self.client.post(reverse('learn:signup'), data=form_data)
 
         # Then
         self.assertInHTML(
@@ -113,7 +113,7 @@ class SigninTests(TestCase):
         }
 
         # When
-        response = self.client.post(reverse('learn:signin'), data=form_data)
+        response = self.client.post(reverse('learn:signup'), data=form_data)
 
         # Then
         self.assertRedirects(response, reverse('learn:dictionaries'))
@@ -130,7 +130,7 @@ class SigninTests(TestCase):
         }
 
         # When
-        response = self.client.post(reverse('learn:signin'), data=form_data)
+        response = self.client.post(reverse('learn:signup'), data=form_data)
 
         # Then
         self.assertInHTML(
@@ -148,7 +148,7 @@ class SigninTests(TestCase):
         }
 
         # When
-        self.client.post(reverse('learn:signin'), data=form_data)
+        self.client.post(reverse('learn:signup'), data=form_data)
 
         # Then
         self.assertTrue(User.objects.get(username='someusername'))
@@ -162,7 +162,7 @@ class SigninTests(TestCase):
         }
 
         # When
-        response = self.client.post(reverse('learn:signin'), data=form_data)
+        response = self.client.post(reverse('learn:signup'), data=form_data)
 
         # Then
         user = User.objects.filter(username="someusername").first()

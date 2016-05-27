@@ -8,10 +8,10 @@ USERNAME = 'username'
 USERNAME_ALREADY_EXISTS_ = 'This username already exists.'
 
 
-def signin_view(request):
+def signup_view(request):
     if request.method == 'POST':
         return _form_sent_case(request)
-    return render(request, 'learn/signin.html')
+    return render(request, 'learn/signup.html')
 
 
 def _form_sent_case(request):
@@ -46,9 +46,9 @@ def _keep_assigned_fields(request):
 
 def _render_user_exists_error(context, request):
     context['form_errors'] = [(USERNAME, [USERNAME_ALREADY_EXISTS_]), ]
-    return render(request, 'learn/signin.html', context=context)
+    return render(request, 'learn/signup.html', context=context)
 
 
 def _render_autovalidation_errors(context, form, request):
     context['form_errors'] = form.errors.items()
-    return render(request, 'learn/signin.html', context=context)
+    return render(request, 'learn/signup.html', context=context)

@@ -33,7 +33,7 @@
                             {% if user.is_authenticated %}
                                 <li><a href="{% url 'learn:logout' %}">Log out</a></li>
                             {% else %}
-                                <li><a href="{% url 'learn:signin' %}">Sign in</a></li>
+                                <li><a href="{% url 'learn:signup' %}">Sign up</a></li>
                                 <li><a href="{% url 'learn:login' %}">Log in</a></li>
                             {% endif %}
                         </ul>
@@ -43,7 +43,7 @@
                             {% if user.is_authenticated %}
                                 <li><a href="{% url 'learn:logout' %}">Log out</a></li>
                             {% else %}
-                                <li><a href="{% url 'learn:signin' %}">Sign in</a></li>
+                                <li><a href="{% url 'learn:signup' %}">Sign up</a></li>
                                 <li><a href="{% url 'learn:login' %}">Log in</a></li>
                             {% endif %}
                         </ul>

@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from django.contrib.auth.views import logout
 
-from learn.views import signin, exercise, login
+from learn.views import signup, exercise, login
 from .views import views
 
 app_name = 'learn'
@@ -9,7 +9,7 @@ app_name = 'learn'
 urlpatterns = [
     url(r'^$',
         views.index, name='index'),
-    url(r'^signin/?$', signin.signin_view, name='signin'),
+    url(r'^signup/?$', signup.signup_view, name='signup'),
     url(r'^login/?$', login.login_view, name='login'),
     url(r'^logout/$', logout,{'next_page': '/login'}, name='logout'),
     url(r'^dictionaries/?$',
