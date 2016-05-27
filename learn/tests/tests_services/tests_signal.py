@@ -13,7 +13,7 @@ class SignalsTests(TestCase):
         false_send_mail = Mock()
 
         false_objects = MagicMock()
-        false_objects.all.return_value = [User(email='test@test.com')]
+        false_objects.filter.return_value = [User(email='test@test.com',is_staff=False,is_superuser=False)]
         false_users_db = MagicMock()
         false_users_db.objects = false_objects
 

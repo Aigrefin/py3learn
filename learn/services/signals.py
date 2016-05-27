@@ -18,12 +18,12 @@ def send_mail(subject, message, to):
     server.ehlo()
     server.starttls()
     server.login(settings.LEARN_SMTP_ADDRESS, settings.LEARN_SMTP_PASSWORD)
-    server.sendmail(from_address, to, formatted_message)
+    server.sendmail(from_address, to, formatted_message.encode('utf8'))
     server.quit()
 
 
 def send_mail_on_new_word(sender, send=send_mail, user_objects=User, **kwargs):
-    users = list(user_objects.objects.all())
+    users = list(user_objects.objects.filter(is_staff=False,is_superuser=False))
     recipients = list([user.email for user in users])
     translation = kwargs['instance']
     send('New word : ' + str(translation.known_word),
