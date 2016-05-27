@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'anymail'
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -151,6 +152,12 @@ EMAIL_HOST = os.environ['MAILGUN_SMTP_SERVER']
 EMAIL_PORT = os.environ['MAILGUN_SMTP_PORT']
 EMAIL_HOST_USER = os.environ['MAILGUN_SMTP_LOGIN']
 EMAIL_HOST_PASSWORD = os.environ['MAILGUN_SMTP_PASSWORD']
+
+ANYMAIL = {
+    "MAILGUN_API_KEY": os.environ['MAILGUN_API_KEY'],
+}
+EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"
+DEFAULT_FROM_EMAIL = "no-reply@"+os.environ['MAILGUN_DOMAIN']
 
 LOGGING = {
     'version': 1,
