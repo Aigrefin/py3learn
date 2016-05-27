@@ -145,3 +145,9 @@ DATABASES['default'] = dj_database_url.config()
 # Cookie-bases Sessions
 SESSION_COOKIE_HTTPONLY = True
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+
+# Email
+EMAIL_HOST = os.environ['MAILGUN_SMTP_SERVER']
+EMAIL_PORT = os.environ['MAILGUN_SMTP_PORT']
+EMAIL_HOST_USER = os.environ['MAILGUN_SMTP_LOGIN']
+EMAIL_HOST_PASSWORD = os.environ['MAILGUN_SMTP_PASSWORD']

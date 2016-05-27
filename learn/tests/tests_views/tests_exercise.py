@@ -1,6 +1,3 @@
-import datetime
-
-import django
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
@@ -99,8 +96,8 @@ class ExerciseTests(TestCase):
                                                  word_to_learn='TestLearn',
                                                  importance=Translation.SHOULD_KNOW)
         RythmNotation.objects.create(translation=translation,
-                                                      user=user,
-                                                      successes=3)
+                                     user=user,
+                                     successes=3)
         url_parameters = {'dictionary_pk': dictionary.id,
                           'translation_pk': translation.id}
 
@@ -114,7 +111,6 @@ class ExerciseTests(TestCase):
                           response.content.decode('utf8'))
         self.assertInHTML('<div class="col s12"><b>Next repetition</b> : 31 seconds from now</div>',
                           response.content.decode('utf8'))
-
 
     def test_shouldNotContainWordSuccesses_WhenNotLoggedIn(self):
         # Given
