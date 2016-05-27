@@ -32,5 +32,5 @@ class SignalsTests(TestCase):
                                        'Known word : Bien mangé, plein'
                                        '\nWord to learn : No\n\n'
                                        'Seen you soon !')
-        self.assertEqual(args_list[2], 'no-reply@learn.com')
+        self.assertEqual(args_list[2], 'no-reply@py3learn.com')
         self.assertEqual(args_list[3], ['test@test.com'])

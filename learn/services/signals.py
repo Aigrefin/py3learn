@@ -4,8 +4,6 @@ from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.template.loader import get_template
 
-from py3learn import prod_settings
-
 
 def send_mail_on_new_word(sender, send=send_mail, user_objects=User, **kwargs):
     users = list(user_objects.objects.all())
@@ -17,5 +15,5 @@ def send_mail_on_new_word(sender, send=send_mail, user_objects=User, **kwargs):
              'known_word': str(translation.known_word),
              'word_to_learn': str(translation.word_to_learn)
          }),
-         "learn@"+os.environ['MAILGUN_DOMAIN'],
+         "no-reply@" + (os.environ['MAILGUN_DOMAIN'] if 'MAILGUN_DOMAIN' in os.environ else "py3learn.com"),
          recipients, fail_silently=False)
