@@ -1,5 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
+
+from learn.services.signals import send_mail_on_new_word
 
 
 class Dictionary(models.Model):
@@ -34,6 +37,9 @@ class Translation(models.Model):
         first_result = results[0]
         understandable_importance = first_result[1]
         return understandable_importance
+
+
+post_save.connect(send_mail_on_new_word, sender=Translation)
 
 
 class RythmNotation(models.Model):
