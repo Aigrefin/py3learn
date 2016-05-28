@@ -16,8 +16,8 @@ def random_choice(dictionary_pk):
 
 
 def rythm_choice(user, dictionary_pk):
-    tomorrow = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0) + timezone.timedelta(days=1)
-    word_of_the_day = get_next_word(dictionary_pk, tomorrow, user)
+    choose_before = timezone.now()#.replace(hour=0, minute=0, second=0, microsecond=0) + timezone.timedelta(days=1)
+    word_of_the_day = get_next_word(dictionary_pk, choose_before, user)
     if not word_of_the_day:
         new_batch_of_translations = prepare_next_batch(dictionary_pk, user)
         if new_batch_of_translations:
@@ -25,9 +25,9 @@ def rythm_choice(user, dictionary_pk):
     return word_of_the_day
 
 
-def get_next_word(dictionary_pk, tomorrow, user):
+def get_next_word(dictionary_pk, choose_before, user):
     words = Translation.objects \
-        .filter(dictionary_id=dictionary_pk, rythmnotation__user=user, rythmnotation__next_repetition__lt=tomorrow) \
+        .filter(dictionary_id=dictionary_pk, rythmnotation__user=user, rythmnotation__next_repetition__lt=choose_before) \
         .order_by('?')
     max_words = int(get_configuration(MAX_WORDS))
     if len(words) < max_words:
