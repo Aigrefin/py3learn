@@ -1,0 +1,35 @@
+{% load static from staticfiles %}
+<html lang="en">
+<head>
+    <title>Learn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+</head>
+
+<body>
+<main>
+
+    <form action="{% url 'tools:frequency' %}" method="post">
+        {% csrf_token %}
+        <input placeholder="What's you text" id="text" name="text" type="text" autofocus>
+        <label for="text">Text</label>
+        <button type="submit" name="action">Submit</button>
+    </form>
+    {% if words_stats %}
+        <table>
+            <caption style="caption-side:top">Words Frequencies</caption>
+            <tr>
+                <th>Word</th>
+                <th>Count</th>
+            </tr>
+            {% for word, stat in words_stats %}
+                <tr>
+                    <td>{{ word }}</td>
+                    <td>{{ stat }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+</main>
+</body>
