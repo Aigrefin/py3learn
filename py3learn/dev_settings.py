@@ -140,5 +140,4 @@ LEARN_SMTP_PASSWORD = None
 LEARN_SMTP_ADDRESS = None
 
 # Learn configuration
-LEARN_RYTHM = '2'
-LEARN_MAX_WORDS = '5'
+from learn.learn_base_settings import *

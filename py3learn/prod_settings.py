@@ -165,3 +165,6 @@ LOGGING = {
         },
     },
 }
+
+# Learn configuration
+from learn.learn_base_settings import *
