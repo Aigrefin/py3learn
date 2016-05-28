@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 
 from learn.forms import ExerciseForm
 from learn.infrastructure.strings import caseless_equal
-from learn.models import Translation
+from learn.models import Translation, Dictionary
 from learn.services.choice import random_choice, rythm_choice
 from learn.services.repetition import compute_next_repetition
 
@@ -17,6 +17,8 @@ def choose_rythm_notation_exercise(request, dictionary_pk):
         translation = rythm_choice(request.user, dictionary_pk)
     else:
         translation = random_choice(dictionary_pk)
+    if not translation:
+        return redirect('learn:come_back', dictionary_pk=dictionary_pk)
     return redirect('learn:exercise', dictionary_pk=dictionary_pk, translation_pk=translation.id)
 
 
@@ -77,3 +79,16 @@ def exercise_wrong_answer(request, dictionary_pk, translation_pk):
         'translation': Translation.objects.get(pk=translation_pk),
     }
     return render(request, 'learn/exercise_wrong_answer.html', context=context)
+
+
+def come_back(request, dictionary_pk):
+    if not request.user.is_authenticated:
+        return redirect(request, 'learn:dictionaries')
+    translation = Translation.objects.filter(dictionary__id=dictionary_pk, rythmnotation__user_id__exact=request.user.id).order_by('rythmnotation__next_repetition').first()
+    next_repetition = translation.rythmnotation_set.first().next_repetition
+    language = Dictionary.objects.get(id=dictionary_pk)
+    return render(request, 'learn/come_back.html', context={
+        'next_repetition': next_repetition,
+        'dictionary_pk': dictionary_pk,
+        'language': language,
+    })

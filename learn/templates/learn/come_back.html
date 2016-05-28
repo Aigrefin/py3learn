@@ -1,0 +1,18 @@
+{% extends "learn/base.html" %}
+{% block content %}
+    <h3>{{ language }}</h3>
+    <div class="row">
+        <div class="col s12">
+            Next repetition :
+        </div>
+        <div class="col s12 card-panel">
+            <p>{{ next_repetition }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            <a href="{% url 'learn:choose_exercise' dictionary_pk=dictionary_pk %}"
+               class="waves-effect waves-light btn">Try again</a>
+        </div>
+    </div>
+{% endblock content %}
