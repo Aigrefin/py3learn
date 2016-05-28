@@ -47,3 +47,8 @@ class RythmNotation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     successes = models.BigIntegerField()
     next_repetition = models.DateTimeField(auto_now_add=True)
+
+
+class Configuration(models.Model):
+    key = models.CharField(max_length=200, unique=True)
+    value = models.CharField(max_length=200, unique=False)
