@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Dictionary, Translation
+from .models import Dictionary, Translation, Configuration
 
 
 class TranslationInline(admin.TabularInline):
@@ -14,5 +14,5 @@ class DictionaryAdmin(admin.ModelAdmin):
     ]
     inlines = [TranslationInline]
 
-
 admin.site.register(Dictionary, DictionaryAdmin)
+admin.site.register(Configuration, admin.ModelAdmin)
