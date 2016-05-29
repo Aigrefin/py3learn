@@ -131,10 +131,6 @@ STATICFILES_DIRS = (
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Cookie-bases Sessions
-SESSION_COOKIE_HTTPONLY = True
-SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
-
 # Email
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 1025
