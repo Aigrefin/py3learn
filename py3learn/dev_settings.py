@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'easy_timezones',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -51,6 +52,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'easy_timezones.middleware.EasyTimezoneMiddleware',
 ]
 
 ROOT_URLCONF = 'py3learn.urls'
@@ -142,3 +144,7 @@ LEARN_SMTP_ADDRESS = None
 
 # Learn configuration
 from learn.learn_base_settings import *
+
+# Easy Timezone GEOIP db
+GEOIP_DATABASE = os.path.join(PROJECT_ROOT, 'GeoIP.dat')
+GEOIPV6_DATABASE = os.path.join(PROJECT_ROOT, 'GeoIPV6.dat')
