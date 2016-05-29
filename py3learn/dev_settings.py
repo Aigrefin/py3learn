@@ -145,6 +145,8 @@ LEARN_SMTP_ADDRESS = None
 # Easy Timezone GEOIP db
 GEOIP_DATABASE = os.path.join(PROJECT_ROOT, 'GeoIP.dat')
 GEOIPV6_DATABASE = os.path.join(PROJECT_ROOT, 'GeoIPV6.dat')
+print(GEOIP_DATABASE)
+print(GEOIPV6_DATABASE)
 
 # Learn configuration
 from learn.learn_base_settings import *
