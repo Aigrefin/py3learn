@@ -16,7 +16,7 @@ def random_choice(dictionary_pk):
 
 
 def rythm_choice(user, dictionary_pk):
-    choose_before = timezone.now()#.replace(hour=0, minute=0, second=0, microsecond=0) + timezone.timedelta(days=1)
+    choose_before = timezone.now()
     word_of_the_day = get_next_word(dictionary_pk, choose_before, user)
     if not word_of_the_day:
         new_batch_of_translations = prepare_next_batch(dictionary_pk, user)
