@@ -150,3 +150,5 @@ print("-----", GEOIPV6_DATABASE)
 
 # Learn configuration
 from learn.learn_base_settings import *
+
+LEARN_DUMMY
