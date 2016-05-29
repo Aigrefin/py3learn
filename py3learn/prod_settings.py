@@ -171,8 +171,6 @@ LOGGING = {
 # Easy Timezone GEOIP db
 GEOIP_DATABASE = os.path.join(PROJECT_ROOT, 'GeoLiteCity.dat')
 GEOIPV6_DATABASE = os.path.join(PROJECT_ROOT, 'GeoLiteCityv6.dat')
-print("-----", GEOIP_DATABASE)
-print("-----", GEOIPV6_DATABASE)
 
 # Learn configuration
 from learn.learn_base_settings import *
