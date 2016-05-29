@@ -142,9 +142,9 @@ EMAIL_PORT = 1025
 LEARN_SMTP_PASSWORD = None
 LEARN_SMTP_ADDRESS = None
 
-# Learn configuration
-from learn.learn_base_settings import *
-
 # Easy Timezone GEOIP db
 GEOIP_DATABASE = os.path.join(PROJECT_ROOT, 'GeoIP.dat')
 GEOIPV6_DATABASE = os.path.join(PROJECT_ROOT, 'GeoIPV6.dat')
+
+# Learn configuration
+from learn.learn_base_settings import *
