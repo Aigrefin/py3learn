@@ -1,3 +1,4 @@
+from enum import Enum
 from unittest.mock import MagicMock
 
 from django.test import TestCase
@@ -14,27 +15,30 @@ class ConfigurationTests(TestCase):
 
     def test_shouldReturnConfigurationAtSpecifiedKey(self):
         # Given
+        enum = Enum('enum', 'A_KEY')
         self.configuration_objects.filter.return_value = [Configuration(key='A_KEY', value='AValue'), ]
 
         # When
-        result = get_configuration('A_KEY', configuration_model=self.configuration_model)
+        result = get_configuration(enum.A_KEY, configuration_model=self.configuration_model)
 
         # Then
         self.assertEqual(result, 'AValue')
 
     def test_shouldReturnNoneWhenNoConfigurationExists(self):
         # Given
+        enum = Enum('enum', 'NONE')
         self.configuration_objects.filter.return_value = []
 
         # When
         try:
-            get_configuration('NONE', configuration_model=self.configuration_model)
+            get_configuration(enum.NONE, configuration_model=self.configuration_model)
 
         # Then
         except AttributeError as e:
             self.assertEqual("'Settings' object has no attribute 'NONE'", str(e))
 
     def test_shouldReturnDefaultMaxWordsLearningFromSettingsWhenNoEntryExists(self):
+        enum = Enum('enum', 'LEARN_RYTHM_MULTIPLIER LEARN_BASE_RYTHM LEARN_MAX_WORDS')
         for given_key, expected_value in {
             'LEARN_RYTHM_MULTIPLIER': '2',
             'LEARN_BASE_RYTHM': '2',
@@ -44,7 +48,7 @@ class ConfigurationTests(TestCase):
             self.configuration_objects.filter.return_value = []
 
             # When
-            result = get_configuration(given_key, configuration_model=self.configuration_model)
+            result = get_configuration(enum.__getattr__(given_key), configuration_model=self.configuration_model)
 
             # Then
             self.assertEqual(result, expected_value)

@@ -5,9 +5,8 @@ from django.db.models import Q
 from django.utils import timezone
 
 from learn.infrastructure.configuration import get_configuration
+from learn.learn_base_settings import available_settings
 from learn.models import Translation, RythmNotation
-
-MAX_WORDS = 'LEARN_MAX_WORDS'
 
 
 def random_choice(dictionary_pk):
@@ -29,7 +28,7 @@ def get_next_word(dictionary_pk, choose_before, user):
     words = Translation.objects \
         .filter(dictionary_id=dictionary_pk, rythmnotation__user=user, rythmnotation__next_repetition__lt=choose_before) \
         .order_by('?')
-    max_words = int(get_configuration(MAX_WORDS))
+    max_words = int(get_configuration(available_settings.LEARN_MAX_WORDS))
     if len(words) < max_words:
         translations = Translation.objects.filter(
                 Q(dictionary_id=dictionary_pk),
@@ -37,7 +36,7 @@ def get_next_word(dictionary_pk, choose_before, user):
         for translation in translations:
             RythmNotation.objects.create(user=user, translation=translation, successes=0,
                                          next_repetition=timezone.now())
-        words = list(chain(words,translations))
+        words = list(chain(words, translations))
     if words:
         return random.choice(words)
     else:
@@ -45,7 +44,7 @@ def get_next_word(dictionary_pk, choose_before, user):
 
 
 def prepare_next_batch(dictionary_pk, user):
-    max_words = int(get_configuration(MAX_WORDS))
+    max_words = int(get_configuration(available_settings.LEARN_MAX_WORDS))
     new_batch_of_translations = Translation.objects.filter(
             Q(dictionary_id=dictionary_pk),
             ~Q(rythmnotation__user=user))[:max_words]
