@@ -27,7 +27,7 @@ def rythm_choice(user, dictionary_pk):
 def get_next_word(dictionary_pk, choose_before, user):
     words = Translation.objects \
         .filter(dictionary_id=dictionary_pk, rythmnotation__user=user, rythmnotation__next_repetition__lt=choose_before) \
-        .order_by('?')
+        .order_by('rythmnotation__next_repetition')
     max_words = int(get_configuration(available_settings.LEARN_MAX_WORDS))
     if len(words) < max_words:
         translations = Translation.objects.filter(
