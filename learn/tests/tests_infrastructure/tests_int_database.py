@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
@@ -110,6 +111,20 @@ class DatabaseIntTests(TestCase):
         notation = RythmNotation.objects.all().first()
         self.assertEqual(notation.successes, 42)
         self.assertEqual(notation.next_repetition, next_repetition)
+
+    def test_shouldReturnDateOfNextWordToLearn(self):
+        # Given
+        translation1 = Translation.objects.create(dictionary=self.dictionary, word_to_learn='hello', known_word='salut')
+        translation2 = Translation.objects.create(dictionary=self.dictionary, word_to_learn='hello2', known_word='salut2')
+        now = timezone.now()
+        create_rythm_object(now, translation1, self.user)
+        create_rythm_object(now + timedelta(seconds=10), translation2, self.user)
+
+        # When
+        result = self.database.get_date_of_next_word_to_learn(self.user)
+
+        # Then
+        self.assertEqual(result, now)
 
 
 def create_rythm_object(repetition_set_after_now, translation2, user):

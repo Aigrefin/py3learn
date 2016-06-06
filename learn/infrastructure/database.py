@@ -33,3 +33,6 @@ class Database:
         rythm_notation.next_repetition = next_repetition
         rythm_notation.successes = successes
         rythm_notation.save()
+
+    def get_date_of_next_word_to_learn(self, user):
+        return RythmNotation.objects.filter(user=user).order_by('next_repetition').first().next_repetition

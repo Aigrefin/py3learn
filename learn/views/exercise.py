@@ -68,13 +68,11 @@ def exercise_wrong_answer(request, dictionary_pk, translation_pk):
     return render(request, 'learn/exercise_wrong_answer.html', context=context)
 
 
-def come_back(request, dictionary_pk):
+@inject
+def come_back(request, dictionary_pk, database: Database):
     if not request.user.is_authenticated:
         return redirect(request, 'learn:dictionaries')
-    translation = Translation.objects.filter(dictionary__id=dictionary_pk,
-                                             rythmnotation__user_id__exact=request.user.id).order_by(
-            'rythmnotation__next_repetition').first()
-    next_repetition = translation.rythmnotation_set.first().next_repetition
+    next_repetition = database.get_date_of_next_word_to_learn(user=request.user)
     language = Dictionary.objects.get(id=dictionary_pk)
     return render(request, 'learn/come_back.html', context={
         'next_repetition': next_repetition,
