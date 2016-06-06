@@ -26,7 +26,7 @@ class ExerciseTests(TestCase):
                 </div>""",
                 response.content.decode('utf8'))
         self.assertInHTML(
-                '<input placeholder="Translate the word!" id="answer" name="answer" type="text" class="validate" autofocus>',
+                '<input placeholder="Translate the word!" id="answer" autocomplete="off" name="answer" type="text" class="validate" autofocus>',
                 response.content.decode('utf8'))
         """self.assertInHTML(
                 '<form class="col s12" action="' +
@@ -63,7 +63,7 @@ class ExerciseTests(TestCase):
                 </div>""",
                 response.content.decode('utf8'))
         self.assertInHTML(
-                """<input placeholder="Translate the word!" id="answer" name="answer" type="text" class="validate invalid" autofocus>""",
+                """<input placeholder="Translate the word!" id="answer" autocomplete="off" name="answer" type="text" class="validate invalid" autofocus>""",
                 response.content.decode('utf8'))
         self.assertInHTML(
                 """<div class="card-panel red lighten-3">This field is required.</div>""",
