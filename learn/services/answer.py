@@ -1,3 +1,5 @@
+from math import floor
+
 from py3njection import inject
 
 from learn.infrastructure.database import Database
@@ -20,7 +22,7 @@ class Answer:
             successes = rythm_notation.successes + 1
         else:
             next_repetition = compute_next_repetition(rythm_notation.successes)
-            successes = 0
+            successes = rythm_notation.successes / 2
         self.database.save_rythm_notation(next_repetition, successes, rythm_notation)
 
 

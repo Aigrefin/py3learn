@@ -68,7 +68,7 @@ class AnswerTests(TestCase):
     def test_shouldDowngradeTranslationStatistics_WhenBadAnswer(self, compute_next_repetition_mock):
         # Given
         translation = Translation(word_to_learn="Xin chào", known_word="Bonjour")
-        notation = RythmNotation(translation=translation, successes=1, next_repetition=None)
+        notation = RythmNotation(translation=translation, successes=42, next_repetition=None)
 
         self.database.get_matching_notation.return_value = notation
 
@@ -80,4 +80,4 @@ class AnswerTests(TestCase):
 
         # Then
         self.assertEqual(self.database.save_rythm_notation.call_args_list[0][0][0], next_repetition)
-        self.assertEqual(self.database.save_rythm_notation.call_args_list[0][0][1], 0)
+        self.assertEqual(self.database.save_rythm_notation.call_args_list[0][0][1], 21)

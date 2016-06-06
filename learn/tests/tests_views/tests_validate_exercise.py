@@ -99,12 +99,12 @@ class ValidateExerciseTests(TestCase):
         translation_repetition = self.translation.rythmnotation_set.first()
         self.assertNotEqual(translation_repetition.next_repetition, current_repetition)
 
-    def test_shouldResetNotation_ForTheCurrentTranslation_WhenFailedAnswered(self):
+    def test_shouldDowngradeNotation_ForTheCurrentTranslation_WhenFailedAnswered(self):
         # Given
         user = create_and_login_a_user(self.client)
         RythmNotation.objects.create(translation=self.translation,
                                      user=user,
-                                     successes=3)
+                                     successes=8)
 
         # When
         self.client.post(
@@ -112,4 +112,4 @@ class ValidateExerciseTests(TestCase):
                 data={'answer': 'badAnswer'})
 
         # Then
-        self.assertEqual(self.translation.rythmnotation_set.first().successes, 0)
+        self.assertEqual(self.translation.rythmnotation_set.first().successes, 4)
