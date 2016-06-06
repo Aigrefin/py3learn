@@ -1,64 +1,27 @@
-from django.core.urlresolvers import reverse
-from django.test import TestCase
+from unittest import TestCase
+from unittest.mock import patch, call, MagicMock
 
-from learn.models import Dictionary
-from learn.models import Translation
+from django.test import RequestFactory
+
+from learn.infrastructure.database import Database
+from learn.views.wrong_answer import exercise_wrong_answer
 
 
 class ExerciseWrongAnswerTests(TestCase):
-    def setUp(self):
-        self.dictionary = Dictionary.objects.create(language='TestLang')
-        self.translation = Translation.objects.create(dictionary=self.dictionary,
-                                                      known_word='TestKnown',
-                                                      word_to_learn='TestLearn',
-                                                      importance=Translation.SHOULD_KNOW)
-        self.url_parameters = {'dictionary_pk': self.dictionary.id,
-                               'translation_pk': self.translation.id}
+    @patch("learn.views.wrong_answer.render")
+    def test_shouldRenderWrongAnswer_WithDictionaryPK_AndTranslationPK_AndTranslation(self, render_mock):
+        # Given
+        database = MagicMock(Database)
+        factory = RequestFactory()
+        request = factory.get('fake-url')
 
-    def test_shouldRenderExercise_WithAnswerText(self):
         # When
-        response = self.client.get(reverse('learn:exercise_wrong_answer', kwargs=self.url_parameters))
+        exercise_wrong_answer(request, 23, 42, database=database)
 
         # Then
-        self.assertEqual(response.status_code, 200)
-        self.assertInHTML(
-                """<div class="col s12 card-panel red lighten-4">
-                    <p>TestLearn</p>
-                </div>""",
-                response.content.decode('utf8'))
-
-    def test_shouldContainKnownWord(self):
-        # When
-        response = self.client.get(reverse('learn:exercise_wrong_answer', kwargs=self.url_parameters))
-
-        # Then
-        self.assertInHTML(
-                """<div class="col s12 card-panel">
-                    <p>TestKnown</p>
-                </div>""",
-                response.content.decode('utf8'))
-
-    def test_shouldContainWordImportance(self):
-        # When
-        response = self.client.get(reverse('learn:exercise_wrong_answer', kwargs=self.url_parameters))
-
-        # Then
-        self.assertInHTML("""<div class="col s12">
-                                French (Should know):
-                            </div>""", response.content.decode('utf8'))
-
-    def test_shouldContainRetypeFields(self):
-        # When
-        response = self.client.get(reverse('learn:exercise_wrong_answer', kwargs=self.url_parameters))
-
-        # Then
-        self.assertInHTML(
-                """
-                <div class="row">
-                    <div class="input-field col s6">
-                        <input placeholder="Translate the word!" id="answer" name="answer" type="text"
-                               class="validate" autofocus>
-                        <label for="answer">Retype to continue</label>
-                    </div>
-                </div>
-                """, response.content.decode('utf-8'))
+        expected_args = call(request, 'learn/exercise_wrong_answer.html', context={
+            'dictionary_pk': 23,
+            'translation_pk': 42,
+            'translation': database.get_translation()
+        })
+        self.assertEqual(render_mock.call_args_list[0], expected_args)

@@ -57,14 +57,3 @@ def exercise(request, dictionary_pk, translation_pk, wrong_answer=False, bad_inp
         'bad_input': bad_input != False,
     }
     return render(request, 'learn/exercise.html', context=context)
-
-
-def exercise_wrong_answer(request, dictionary_pk, translation_pk):
-    context = {
-        'dictionary_pk': dictionary_pk,
-        'translation_pk': translation_pk,
-        'translation': Translation.objects.get(pk=translation_pk),
-    }
-    return render(request, 'learn/exercise_wrong_answer.html', context=context)
-
-

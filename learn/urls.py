@@ -2,6 +2,7 @@ from django.conf.urls import url
 from django.contrib.auth.views import logout
 
 import learn.views.comeback
+import learn.views.wrong_answer
 from learn.views import signup, exercise, login
 from .views import views
 
@@ -24,7 +25,7 @@ urlpatterns = [
     url(r'^dictionaries/(?P<dictionary_pk>[0-9]+)/come_back$',
         learn.views.comeback.come_back, name='come_back'),
     url(r'^dictionaries/(?P<dictionary_pk>[0-9]+)/exercises/(?P<translation_pk>[0-9]+)/wrong_answer$',
-        exercise.exercise_wrong_answer, name='exercise_wrong_answer'),
+        learn.views.wrong_answer.exercise_wrong_answer, name='exercise_wrong_answer'),
     url(r'^dictionaries/(?P<dictionary_pk>[0-9]+)/exercises/(?P<translation_pk>[0-9]+)/(?P<bad_input>bad_input)$',
         exercise.exercise, name='exercise_bad_input'),
     url(r'^dictionaries/(?P<dictionary_pk>[0-9]+)/exercises/(?P<translation_pk>[0-9]+)/validate$',
