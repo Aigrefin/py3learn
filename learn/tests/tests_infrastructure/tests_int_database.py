@@ -126,6 +126,16 @@ class DatabaseIntTests(TestCase):
         # Then
         self.assertEqual(result, now)
 
+    def test_shouldReturnDictionaryLanguage_FromPK(self):
+        # Given
+        dictionary = Dictionary.objects.create(language="testlang")
+
+        # When
+        result = self.database.get_dictionary_language(dictionary.id)
+
+        # Then
+        self.assertEqual(result, "testlang")
+
 
 def create_rythm_object(repetition_set_after_now, translation2, user):
     rythm_notation = RythmNotation.objects.create(translation=translation2, user=user, successes=0)

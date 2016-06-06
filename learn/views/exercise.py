@@ -3,7 +3,7 @@ from py3njection import inject
 
 from learn.forms import ExerciseForm
 from learn.infrastructure.database import Database
-from learn.models import Translation, Dictionary
+from learn.models import Translation
 from learn.services.answer import Answer
 from learn.services.choice import random_choice, rythm_choice
 from learn.services.repetition import compute_next_repetition
@@ -68,14 +68,3 @@ def exercise_wrong_answer(request, dictionary_pk, translation_pk):
     return render(request, 'learn/exercise_wrong_answer.html', context=context)
 
 
-@inject
-def come_back(request, dictionary_pk, database: Database):
-    if not request.user.is_authenticated:
-        return redirect(request, 'learn:dictionaries')
-    next_repetition = database.get_date_of_next_word_to_learn(user=request.user)
-    language = Dictionary.objects.get(id=dictionary_pk)
-    return render(request, 'learn/come_back.html', context={
-        'next_repetition': next_repetition,
-        'dictionary_pk': dictionary_pk,
-        'language': language,
-    })

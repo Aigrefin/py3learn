@@ -1,7 +1,7 @@
 from django.db.models import Q
 from django.utils import timezone
 
-from learn.models import Translation, RythmNotation
+from learn.models import Translation, RythmNotation, Dictionary
 
 
 class Database:
@@ -36,3 +36,6 @@ class Database:
 
     def get_date_of_next_word_to_learn(self, user):
         return RythmNotation.objects.filter(user=user).order_by('next_repetition').first().next_repetition
+
+    def get_dictionary_language(self, dictionary_pk):
+        return Dictionary.objects.get(id=dictionary_pk).language
