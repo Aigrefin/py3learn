@@ -1,82 +1,89 @@
+from unittest import TestCase
+from unittest.mock import MagicMock, create_autospec
+
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
-from django.test import TestCase
 from django.utils import timezone
 
+from learn.infrastructure.database import Database
 from learn.models import Dictionary, Translation, RythmNotation
 from learn.services.choice import rythm_choice
 
 
-def createTranslations(dictionary, number, user):
-    translations = []
-    for i in range(number):
-        translation = Translation.objects.create(dictionary=dictionary,
-                                                 known_word='TestKnown' + str(i),
-                                                 word_to_learn='TestLearn' + str(i))
+def create_translations(numberOfTranslations, dictionary, user):
+    translations = list()
+    for currentTranslationNumber in range(0, numberOfTranslations):
+        translation = Translation(dictionary=dictionary,
+                                  known_word='TestKnown' + str(currentTranslationNumber),
+                                  word_to_learn='TestLearn' + str(currentTranslationNumber))
         translations.append(translation)
-        RythmNotation.objects.create(user=user,
-                                     translation=translation,
-                                     successes=0,
-                                     next_repetition=timezone.now().replace(hour=i))
+        RythmNotation(user=user,
+                      translation=translation,
+                      successes=0,
+                      next_repetition=timezone.now().replace(hour=currentTranslationNumber))
+
     return translations
 
 
 class ChooseRythmNotationExerciseTests(TestCase):
-    def test_shouldReturnFirstWord_WithRepetitionForToday(self):
+    def setUp(self):
+        self.conf = MagicMock()
+        self.conf.get_configuration = MagicMock()
+        self.database = MagicMock(spec=Database)
+        self.database.get_ordered_scheduled_words_to_learn_before_date = MagicMock()
+        self.database.plan_new_words_to_learn = MagicMock()
+        self.user = User(username='a', password='b')
+        self.dictionary = Dictionary(language='TestLang')
+
+    def test_shouldReturnWord_FromDatabase(self):
         # Given
-        user = User.objects.create_user(username='a', password='b')
-        dictionary = Dictionary.objects.create(language='TestLang')
-        translation = createTranslations(dictionary, 6, user)[0]
+        translations = create_translations(1, self.dictionary, self.user)
+
+        self.conf.get_configuration.return_value = 1
+        self.database.get_ordered_scheduled_words_to_learn_before_date.return_value = translations
 
         # When
-        result = rythm_choice(user, dictionary)
-        # Then
-        self.assertEqual(result.rythmnotation_set.filter(user=user).first().next_repetition.day, timezone.now().day)
+        result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf)
 
-    def test_shouldPrepareBatchOfNeverSeenWords_BeforeReturningFirstWord_WithRepetitionForToday(self):
+        # Then
+        self.assertIn(result, translations)
+
+    def test_shouldPrepareNeverSeenWords_ToCompleteCurrentWords_UpToMaxWordsToLearn(self):
         # Given
-        user = User.objects.create_user(username='a', password='b')
-        dictionary = Dictionary.objects.create(language='TestLang')
-        translation1 = Translation.objects.create(dictionary=dictionary,
-                                                  known_word='TestKnown1',
-                                                  word_to_learn='TestLearn1')
-        translation2 = Translation.objects.create(dictionary=dictionary,
-                                   known_word='TestKnown2',
-                                   word_to_learn='TestLearn2')
+        translations = create_translations(2, self.dictionary, self.user)
+
+        self.conf.get_configuration.return_value = 2
+        self.database.get_ordered_scheduled_words_to_learn_before_date._mock_return_value = list()
+        self.database.plan_new_words_to_learn.return_value = translations
 
         # When
-        result = rythm_choice(user, dictionary)
+        result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf)
 
         # Then
-        self.assertTrue(result == translation1 or result == translation2)
-
+        self.assertIn(result, translations)
+        words_to_complete_the_list = self.database.plan_new_words_to_learn.call_args_list[0][0][2]
+        self.assertEqual(words_to_complete_the_list, 2)
 
     def test_shouldReturnNone_WhenNoWordForToday_AndNoNewWordCanBeAdded(self):
         # Given
-        user = User.objects.create_user(username='a', password='b')
-        dictionary = Dictionary.objects.create(language='TestLang')
+        self.conf.get_configuration.return_value = 2
+        self.database.get_ordered_scheduled_words_to_learn_before_date._mock_return_value = list()
+        self.database.plan_new_words_to_learn.return_value = list()
 
         # When
-        result = rythm_choice(user, dictionary)
+        result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf)
 
         # Then
-        self.assertEqual(None, result)
+        self.assertIsNone(result)
 
-    def test_shouldReturnOneTranslation_FromASet(self):
+    def test_shouldUseRandomChoice_ToReturnCurrentWord(self):
         # Given
-        dictionary = Dictionary.objects.create(language='TestLang')
-        translation = Translation.objects.create(dictionary=dictionary,
-                                                 known_word='TestKnown3',
-                                                 word_to_learn='TestLearn3')
-
-        url_parameters = {'dictionary_pk': dictionary.id}
+        self.conf.get_configuration.return_value = 1
+        translations = create_translations(1, self.dictionary, self.user)
+        self.database.get_ordered_scheduled_words_to_learn_before_date.return_value = translations
+        create_autospec("learn.services.choice.random.choice", translations[0])
 
         # When
-        response = self.client.get(reverse('learn:choose_exercise', kwargs=url_parameters))
+        result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf)
 
         # Then
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('learn:exercise', kwargs={
-            'dictionary_pk': dictionary.id,
-            'translation_pk': translation.id
-        }))
+        self.assertEqual(result, translations[0])

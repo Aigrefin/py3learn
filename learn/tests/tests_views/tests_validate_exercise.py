@@ -82,10 +82,13 @@ class ValidateExerciseTests(TestCase):
         # Then
         self.assertEqual(self.translation.rythmnotation_set.first().successes, 1)
 
-    @mock.create_autospec(compute_next_repetition, return_value=datetime(2016, 1, 1, 1, 1, 1))
     def test_shouldChangeNextRepetition_ForTheCurrentTranslation_WhenSuccessfulyAnswered(self):
         # Given
-        create_and_login_a_user(self.client)
+        user = create_and_login_a_user(self.client)
+        notation = RythmNotation.objects.create(translation=self.translation,
+                                     user=user,
+                                     successes=0)
+        current_repetition = notation.next_repetition
 
         # When
         self.client.post(
@@ -93,7 +96,8 @@ class ValidateExerciseTests(TestCase):
                 data={'answer': 'TestLearn'})
 
         # Then
-        self.assertEqual(self.translation.rythmnotation_set.first().next_repetition, compute_next_repetition(1))
+        translation_repetition = self.translation.rythmnotation_set.first()
+        self.assertNotEqual(translation_repetition.next_repetition, current_repetition)
 
     def test_shouldResetNotation_ForTheCurrentTranslation_WhenFailedAnswered(self):
         # Given

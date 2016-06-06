@@ -3,15 +3,16 @@ from unittest.mock import MagicMock
 
 from django.test import TestCase
 
-from learn.infrastructure.configuration import get_configuration, set_configuration
+from learn.infrastructure.configuration import LearnConfiguration
 from learn.models import Configuration
 
 
-class ConfigurationTests(TestCase):
+class ConfigurationIntTests(TestCase):
     def setUp(self):
         self.configuration_objects = MagicMock()
         self.configuration_model = MagicMock()
         self.configuration_model.objects = self.configuration_objects
+        self.conf = LearnConfiguration()
 
     def test_shouldReturnConfigurationAtSpecifiedKey(self):
         # Given
@@ -19,7 +20,7 @@ class ConfigurationTests(TestCase):
         self.configuration_objects.filter.return_value = [Configuration(key='A_KEY', value='AValue'), ]
 
         # When
-        result = get_configuration(enum.A_KEY, configuration_model=self.configuration_model)
+        result = self.conf.get_configuration(enum.A_KEY, configuration_model=self.configuration_model)
 
         # Then
         self.assertEqual(result, 'AValue')
@@ -31,7 +32,7 @@ class ConfigurationTests(TestCase):
 
         # When
         try:
-            get_configuration(enum.NONE, configuration_model=self.configuration_model)
+            self.conf.get_configuration(enum.NONE, configuration_model=self.configuration_model)
 
         # Then
         except AttributeError as e:
@@ -48,7 +49,8 @@ class ConfigurationTests(TestCase):
             self.configuration_objects.filter.return_value = []
 
             # When
-            result = get_configuration(enum.__getattr__(given_key), configuration_model=self.configuration_model)
+            result = self.conf.get_configuration(enum.__getattr__(given_key),
+                                                 configuration_model=self.configuration_model)
 
             # Then
             self.assertEqual(result, expected_value)
@@ -58,7 +60,7 @@ class ConfigurationTests(TestCase):
         self.configuration_objects.create = MagicMock()
 
         # When
-        set_configuration('SOME_KEY', 'SOME_VALUE', configuration_model=self.configuration_model)
+        self.conf.set_configuration('SOME_KEY', 'SOME_VALUE', configuration_model=self.configuration_model)
 
         # Then
         kwargs = self.configuration_objects.create.call_args_list[0][1]
