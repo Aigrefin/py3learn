@@ -6,7 +6,7 @@ from learn.infrastructure.database import Database
 
 @inject
 def come_back(request, dictionary_pk, database: Database):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         return redirect(request, 'learn:dictionaries')
 
     next_repetition = database.get_date_of_next_word_to_learn(user=request.user)

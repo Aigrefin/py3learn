@@ -14,8 +14,8 @@ class ComebackTests(TestCase):
         # Given
         factory = RequestFactory()
         request = factory.get('fake-url')
-        request.user = AnonymousUser()
-        request.user.is_authenticated = False
+        request.user = MagicMock(spec=AnonymousUser)
+        request.user.is_authenticated.return_value = False
 
         # When
         come_back(request, None, database=MagicMock(Database))
@@ -29,8 +29,8 @@ class ComebackTests(TestCase):
         # Given
         factory = RequestFactory()
         request = factory.get('fake-url')
-        request.user = AnonymousUser()
-        request.user.is_authenticated = True
+        request.user = MagicMock(spec=AnonymousUser)
+        request.user.is_authenticated.return_value = True
         database = MagicMock(Database)
 
         # When

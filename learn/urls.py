@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from django.contrib.auth.views import logout
 
+import learn.views.choose_exercise
 import learn.views.comeback
 import learn.views.wrong_answer
 from learn.views import signup, exercise, login
@@ -19,7 +20,7 @@ urlpatterns = [
     url(r'^dictionaries/(?P<pk>[0-9]+)/translations?$',
         views.TranslationsView.as_view(), name='translations'),
     url(r'^dictionaries/(?P<dictionary_pk>[0-9]+)/exercises$',
-        exercise.choose_rythm_notation_exercise, name='choose_exercise'),
+        learn.views.choose_exercise.choose_rythm_notation_exercise, name='choose_exercise'),
     url(r'^dictionaries/(?P<dictionary_pk>[0-9]+)/exercises/(?P<translation_pk>[0-9]+)$',
         exercise.exercise, name='exercise'),
     url(r'^dictionaries/(?P<dictionary_pk>[0-9]+)/come_back$',
