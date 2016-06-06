@@ -6,11 +6,6 @@ from learn.models import Translation, RythmNotation
 
 class Database:
 
-    def plan_new_words_to_learn(self, dictionary_pk, user, quantity_of_words_to_plan):
-        translations = self.get_unseen_words(dictionary_pk, quantity_of_words_to_plan, user)
-        self.schedule_words(translations, user, timezone.now())
-        return translations
-
     def schedule_words(self, translations, user, now):
         for translation in translations:
             RythmNotation.objects.create(user=user, translation=translation, successes=0,

@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, create_autospec
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+from learn.infrastructure.configuration import LearnConfiguration
 from learn.infrastructure.database import Database
 from learn.models import Dictionary, Translation, RythmNotation
 from learn.services.choice import rythm_choice
@@ -26,11 +27,8 @@ def create_translations(numberOfTranslations, dictionary, user):
 
 class ChooseRythmNotationExerciseTests(TestCase):
     def setUp(self):
-        self.conf = MagicMock()
-        self.conf.get_configuration = MagicMock()
+        self.conf = MagicMock(spec=LearnConfiguration)
         self.database = MagicMock(spec=Database)
-        self.database.get_ordered_scheduled_words_to_learn_before_date = MagicMock()
-        self.database.plan_new_words_to_learn = MagicMock()
         self.user = User(username='a', password='b')
         self.dictionary = Dictionary(language='TestLang')
 
@@ -53,21 +51,24 @@ class ChooseRythmNotationExerciseTests(TestCase):
 
         self.conf.get_configuration.return_value = 2
         self.database.get_ordered_scheduled_words_to_learn_before_date._mock_return_value = list()
-        self.database.plan_new_words_to_learn.return_value = translations
+        # self.database.plan_new_words_to_learn.return_value = translations
+        self.database.get_unseen_words._mock_return_value = translations
 
         # When
         result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf)
 
         # Then
         self.assertIn(result, translations)
-        words_to_complete_the_list = self.database.plan_new_words_to_learn.call_args_list[0][0][2]
+        words_to_complete_the_list = self.database.get_unseen_words.call_args_list[0][0][1]
         self.assertEqual(words_to_complete_the_list, 2)
+        self.assertEqual(self.database.schedule_words.call_args_list[0][0][0], translations)
 
     def test_shouldReturnNone_WhenNoWordForToday_AndNoNewWordCanBeAdded(self):
         # Given
         self.conf.get_configuration.return_value = 2
         self.database.get_ordered_scheduled_words_to_learn_before_date._mock_return_value = list()
-        self.database.plan_new_words_to_learn.return_value = list()
+        # self.database.plan_new_words_to_learn.return_value = list()
+        self.database.get_unseen_words._mock_return_value = list()
 
         # When
         result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf)

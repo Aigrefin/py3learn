@@ -33,9 +33,12 @@ def get_max_words(conf):
 
 def prepare_more_words(database, dictionary_pk, max_words, user, words):
     quantity_of_words_to_plan = (max_words - len(words))
-    translations = database.plan_new_words_to_learn(dictionary_pk, user, quantity_of_words_to_plan)
-    words = list(chain(words, translations))
-    return words
+    new_words_next_repetition = timezone.now()
+
+    translations = database.get_unseen_words(dictionary_pk, quantity_of_words_to_plan, user)
+    database.schedule_words(translations, user, new_words_next_repetition)
+    return list(chain(words, translations))
+
 
 
 def choose_word(max_words, words):
