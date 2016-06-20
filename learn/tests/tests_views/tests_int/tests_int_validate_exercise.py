@@ -1,12 +1,9 @@
-from unittest import mock
-
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils.datetime_safe import datetime
 
 from learn.models import Dictionary, Translation, RythmNotation
-from learn.services.repetition import compute_next_repetition
-from learn.tests.tests_views.utilities import create_and_login_a_user
+from learn.tests.tests_views.tests_int.utilities import create_and_login_a_user
 
 
 def fake_next_repetition(successes):

@@ -1,157 +1,43 @@
-from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
-from django.test import TestCase
+from unittest import TestCase
+from unittest.mock import MagicMock, patch, call
+
+from django.contrib.auth.models import AnonymousUser
+from django.test import RequestFactory
+
+from learn.infrastructure.database import Database
+from learn.views.comeback import come_back
+from learn.views.login import login_view
 
 
 class LoginTests(TestCase):
-    def test_shouldRouteToLoginPage(self):
-        # When
-        response = self.client.get(reverse('learn:login'))
-
-        # Then
-        self.assertEqual(response.status_code, 200)
-        self.assertInHTML("<h2>Log in</h2>", response.content.decode('utf-8'))
-
-    def test_shouldFindLinkInNavbar(self):
-        # When
-        response = self.client.get(reverse('learn:login'))
-
-        # Then
-        self.assertInHTML("<li><a href=" + reverse('learn:login') + ">Log in</a></li>",
-                          response.content.decode('utf-8'),
-                          count=2)
-
-    def test_shouldContainLoginForm(self):
-        # When
-        response = self.client.get(reverse('learn:login'))
-
-        # Then
-        self.assertInHTML(
-                """
-                    <div class="row">
-                        <div class="col s12">
-                            <input id="username" name="username" type="text" placeholder="user name" value=""/>
-                            <label for="username">User name</label>
-                        </div>
-                    </div>
-                """, response.content.decode('utf-8'))
-        self.assertInHTML(
-                """
-                    <div class="row">
-                        <div class="col s12">
-                            <input id="password" name="password" type="password" class="validate">
-                            <label for="password">Password</label>
-                        </div>
-                    </div>
-                """, response.content.decode('utf-8'))
-        self.assertInHTML(
-                """
-                    <div class="row">
-                        <div class="col s12">
-                            <button class="btn waves-effect waves-light" type="submit" name="action">
-                                Log in
-                                <i class="material-icons right">fingerprint</i>
-                            </button>
-                        </div>
-                    </div>
-                """, response.content.decode('utf-8'))
-
-    def test_shouldSendFormData_ToLogIn(self):
-        # When
-        response = self.client.get(reverse('learn:login'))
-
-        # Then
-        self.assertTrue('<form method="post" action="' + reverse('learn:login') + '">'
-                        in response.content.decode('utf8'))
-
-    def test_shouldDisplayErrorText_WhenBadInput(self):
+    @patch("learn.views.login.render")
+    def test_shouldRedirectToLogin_WhenCalledWithGet(self, render_mock):
         # Given
-        form_data = {
-            'username': '',
-            'password': '',
-        }
+        factory = RequestFactory()
+        request = factory.get('fake-url')
 
         # When
-        response = self.client.post(reverse('learn:login'), data=form_data)
+        login_view(request)
 
         # Then
-        self.assertInHTML(
-                """
-                    <div class="card-panel red lighten-4">
-                        Username:<br/>This field is required.<br/>
-                    </div>
-                """, response.content.decode('utf-8'))
-        self.assertInHTML(
-                """
-                    <div class="card-panel red lighten-4">
-                        Password:<br/>This field is required.<br/>
-                    </div>
-                """, response.content.decode('utf-8'))
+        expected_args = call(request, 'learn/login.html')
+        self.assertEqual(render_mock.call_args_list[0], expected_args)
 
-    def test_shouldRedirectToDictionaries_WhenSuccessfulyLoggedIn(self):
+    @patch("learn.views.comeback.render")
+    def test_shouldRender_WithNextRepetition_AndDictionary_AndLanguage(self, redirect_mock):
         # Given
-        User.objects.create_user(username="someusername", password="mysecurepassword")
-        form_data = {
-            'username': 'someusername',
-            'password': 'mysecurepassword',
-        }
+        factory = RequestFactory()
+        request = factory.get('fake-url')
+        request.user = MagicMock(spec=AnonymousUser)
+        request.user.is_authenticated.return_value = True
+        database = MagicMock(Database)
 
         # When
-        response = self.client.post(reverse('learn:login'), data=form_data)
+        come_back(request, None, database=database)
 
         # Then
-        self.assertRedirects(response, reverse('learn:dictionaries'))
-
-    def test_shouldDisplayErrorText_WhenBadUsernameIsGiven(self):
-        # Given
-        User.objects.create_user(username='someusername',
-                                 password='mysecurepassword')
-        form_data = {
-            'username': 'badusername',
-            'password': 'mysecurepassword',
-        }
-
-        # When
-        response = self.client.post(reverse('learn:login'), data=form_data)
-
-        # Then
-        self.assertInHTML(
-                """
-                    <div class="card-panel red lighten-4">
-                        Login failed:<br/>User name and/or password are incorrect.<br/>
-                    </div>
-                """, response.content.decode('utf-8'))
-
-    def test_shouldDisplayErrorText_WhenBadPasswordIsGiven(self):
-        # Given
-        User.objects.create_user(username='someusername',
-                                 password='mysecurepassword')
-        form_data = {
-            'username': 'someusername',
-            'password': 'badpassword',
-        }
-
-        # When
-        response = self.client.post(reverse('learn:login'), data=form_data)
-
-        # Then
-        self.assertInHTML(
-                """
-                    <div class="card-panel red lighten-4">
-                        Login failed:<br/>User name and/or password are incorrect.<br/>
-                    </div>
-                """, response.content.decode('utf-8'))
-
-    def test_shouldBeMarkedAsActive_WhenSuccessfulyLoggedIn(self):
-        # Given
-        user = User.objects.create_user(username="someusername", password="mysecurepassword")
-        form_data = {
-            'username': 'someusername',
-            'password': 'mysecurepassword',
-        }
-
-        # When
-        self.client.post(reverse('learn:login'), data=form_data)
-
-        # Then
-        self.assertEqual(int(self.client.session['_auth_user_id']), user.pk)
+        expected_args = call(request, 'learn/come_back.html', context={
+            'dictionary_pk': None,
+            'language': database.get_dictionary_language(),
+            'next_repetition': database.get_date_of_next_word_to_learn()})
+        #self.assertEqual(redirect_mock.call_args_list[0], expected_args)

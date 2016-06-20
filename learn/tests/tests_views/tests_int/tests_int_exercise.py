@@ -2,7 +2,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from learn.models import Dictionary, Translation, RythmNotation
-from learn.tests.tests_views.utilities import create_and_login_a_user
+from learn.tests.tests_views.tests_int.utilities import create_and_login_a_user
 
 
 class ExerciseTests(TestCase):
