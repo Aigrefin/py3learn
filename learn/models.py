@@ -23,7 +23,7 @@ class Translation(models.Model):
     )
     importance = models.CharField(max_length=3, choices=KNOWLEDGE_CHOICE, default=MUST_KNOW)
     dictionary = models.ForeignKey(Dictionary, on_delete=models.CASCADE)
-    known_word = models.CharField(max_length=200)
+    known_word = models.CharField(max_length=200, unique=True)
     word_to_learn = models.CharField(max_length=200)
 
     class Meta:
