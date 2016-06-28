@@ -1,4 +1,6 @@
 from datetime import timedelta
+from unittest.mock import patch, Mock
+
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
@@ -115,7 +117,8 @@ class DatabaseIntTests(TestCase):
     def test_shouldReturnDateOfNextWordToLearn(self):
         # Given
         translation1 = Translation.objects.create(dictionary=self.dictionary, word_to_learn='hello', known_word='salut')
-        translation2 = Translation.objects.create(dictionary=self.dictionary, word_to_learn='hello2', known_word='salut2')
+        translation2 = Translation.objects.create(dictionary=self.dictionary, word_to_learn='hello2',
+                                                  known_word='salut2')
         now = timezone.now()
         create_rythm_object(now, translation1, self.user)
         create_rythm_object(now + timedelta(seconds=10), translation2, self.user)
@@ -135,6 +138,33 @@ class DatabaseIntTests(TestCase):
 
         # Then
         self.assertEqual(result, "testlang")
+
+    def test_shouldReturnWord_DueAMonthLater(self):
+        # Given
+        translation_due_a_month_later = Translation.objects.create(dictionary=self.dictionary, word_to_learn='hello',
+                                                                   known_word='salut')
+        self.now = timezone.now()
+        repetition_set_a_month_later = self.now.replace(month=self.now.month + 1, minute=self.now.minute + 1)
+        create_rythm_object(repetition_set_a_month_later, translation_due_a_month_later, self.user)
+
+        # When
+        result = self.database.get_random_well_known_word(self.dictionary, self.user)
+
+        # Then
+        self.assertEqual(result, translation_due_a_month_later)
+
+    @patch("learn.infrastructure.database.Translation")
+    def test_shouldOrderWordsRandomly(self, translation_mock):
+        # Given
+        objects_to_order = Mock()
+        translation_mock.objects.filter.return_value = objects_to_order
+
+        # When
+        self.database.get_random_well_known_word(self.dictionary, self.user)
+
+        # Then
+
+        objects_to_order.order_by.assert_called_once_with("?")
 
 
 def create_rythm_object(repetition_set_after_now, translation2, user):

@@ -16,7 +16,11 @@ def random_choice(dictionary_pk):
 
 
 @inject
-def rythm_choice(dictionary_pk, user, database: Database, conf: LearnConfiguration):
+def rythm_choice(dictionary_pk, user, database: Database, conf: LearnConfiguration, rand: random):
+    if rand.randint(1, 100) == 1:
+        word = database.get_random_well_known_word(dictionary_pk, user)
+        if word:
+            return word
     choose_before = timezone.now()
     words = database.get_ordered_scheduled_words_to_learn_before_date(choose_before, dictionary_pk, user)
     max_words = get_max_words(conf)
@@ -38,7 +42,6 @@ def prepare_more_words(database, dictionary_pk, max_words, user, words):
     translations = database.get_unseen_words(dictionary_pk, quantity_of_words_to_plan, user)
     database.schedule_words(translations, user, new_words_next_repetition)
     return list(chain(words, translations))
-
 
 
 def choose_word(max_words, words):

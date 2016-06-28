@@ -1,5 +1,6 @@
+import random
 from unittest import TestCase
-from unittest.mock import MagicMock, create_autospec
+from unittest.mock import MagicMock, create_autospec, patch
 
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -40,7 +41,8 @@ class ChooseRythmNotationExerciseTests(TestCase):
         self.database.get_ordered_scheduled_words_to_learn_before_date.return_value = translations
 
         # When
-        result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf)
+        result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf,
+                              rand=MagicMock(random))
 
         # Then
         self.assertIn(result, translations)
@@ -51,11 +53,11 @@ class ChooseRythmNotationExerciseTests(TestCase):
 
         self.conf.get_configuration.return_value = 2
         self.database.get_ordered_scheduled_words_to_learn_before_date._mock_return_value = list()
-        # self.database.plan_new_words_to_learn.return_value = translations
         self.database.get_unseen_words._mock_return_value = translations
 
         # When
-        result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf)
+        result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf,
+                              rand=MagicMock(random))
 
         # Then
         self.assertIn(result, translations)
@@ -67,11 +69,11 @@ class ChooseRythmNotationExerciseTests(TestCase):
         # Given
         self.conf.get_configuration.return_value = 2
         self.database.get_ordered_scheduled_words_to_learn_before_date._mock_return_value = list()
-        # self.database.plan_new_words_to_learn.return_value = list()
         self.database.get_unseen_words._mock_return_value = list()
 
         # When
-        result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf)
+        result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf,
+                              rand=MagicMock(random))
 
         # Then
         self.assertIsNone(result)
@@ -84,7 +86,48 @@ class ChooseRythmNotationExerciseTests(TestCase):
         create_autospec("learn.services.choice.random.choice", translations[0])
 
         # When
-        result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf)
+        result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf,
+                              rand=MagicMock(random))
 
         # Then
         self.assertEqual(result, translations[0])
+
+    def test_shouldGiveARandomChanceOf_OneOnAHundred(self):
+        # Given
+        random_mock = MagicMock(random)
+
+        # When
+        rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf,
+                     rand=random_mock)
+
+        # Then
+        random_mock.randint.assert_called_with(1, 100)
+
+    def test_shouldReturnWellKnownWordWhenHasTheChance(self):
+        # Given
+        random_mock = MagicMock(random)
+        random_mock.randint.return_value = 1
+        translations = create_translations(1, self.dictionary, self.user)
+        self.database.get_random_well_known_word.return_value = translations[0]
+
+        # When
+        result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf,
+                              rand=random_mock)
+
+        # Then
+        self.assertEqual(result, translations[0])
+
+    @patch("learn.services.choice.timezone.now")
+    def test_shouldContinueChoice_WhenNoWellKnownWordAvailable(self, time_mock):
+        # Given
+        random_mock = MagicMock(random)
+        random_mock.randint.return_value = 1
+        self.database.get_random_well_known_word.return_value = None
+
+        # When
+        rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf,
+                     rand=random_mock)
+
+        # Then
+        self.database.get_ordered_scheduled_words_to_learn_before_date \
+            .assert_called_once_with(time_mock.return_value, self.user, self.dictionary)

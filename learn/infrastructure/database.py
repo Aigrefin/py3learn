@@ -5,7 +5,6 @@ from learn.models import Translation, RythmNotation, Dictionary
 
 
 class Database:
-
     def schedule_words(self, translations, user, now):
         for translation in translations:
             RythmNotation.objects.create(user=user, translation=translation, successes=0,
@@ -39,3 +38,11 @@ class Database:
 
     def get_dictionary_language(self, dictionary_pk):
         return Dictionary.objects.get(id=dictionary_pk).language
+
+    def get_random_well_known_word(self, dictionary_pk, user):
+        now = timezone.now()
+        in_a_month = now.replace(month=now.month + 1)
+        return Translation.objects \
+            .filter(dictionary_id=dictionary_pk, rythmnotation__user=user,
+                    rythmnotation__next_repetition__gt=in_a_month) \
+            .order_by('?').first()
