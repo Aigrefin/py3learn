@@ -16,7 +16,7 @@ def random_choice(dictionary_pk):
 
 
 @inject
-def rythm_choice(dictionary_pk, user, database: Database, conf: LearnConfiguration, rand: random):
+def rythm_choice(dictionary_pk, user, database: Database, conf: LearnConfiguration, rand=random):
     if rand.randint(1, 100) == 1:
         word = database.get_random_well_known_word(dictionary_pk, user)
         if word:

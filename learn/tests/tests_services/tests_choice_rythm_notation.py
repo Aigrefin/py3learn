@@ -41,7 +41,7 @@ class ChooseRythmNotationExerciseTests(TestCase):
         self.database.get_ordered_scheduled_words_to_learn_before_date.return_value = translations
 
         # When
-        result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf,
+        result = rythm_choice(self.dictionary, self.user, database=self.database, conf=self.conf,
                               rand=MagicMock(random))
 
         # Then
@@ -56,7 +56,7 @@ class ChooseRythmNotationExerciseTests(TestCase):
         self.database.get_unseen_words._mock_return_value = translations
 
         # When
-        result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf,
+        result = rythm_choice(self.dictionary, self.user, database=self.database, conf=self.conf,
                               rand=MagicMock(random))
 
         # Then
@@ -72,7 +72,7 @@ class ChooseRythmNotationExerciseTests(TestCase):
         self.database.get_unseen_words._mock_return_value = list()
 
         # When
-        result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf,
+        result = rythm_choice(self.dictionary, self.user, database=self.database, conf=self.conf,
                               rand=MagicMock(random))
 
         # Then
@@ -86,7 +86,7 @@ class ChooseRythmNotationExerciseTests(TestCase):
         create_autospec("learn.services.choice.random.choice", translations[0])
 
         # When
-        result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf,
+        result = rythm_choice(self.dictionary, self.user, database=self.database, conf=self.conf,
                               rand=MagicMock(random))
 
         # Then
@@ -97,7 +97,7 @@ class ChooseRythmNotationExerciseTests(TestCase):
         random_mock = MagicMock(random)
 
         # When
-        rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf,
+        rythm_choice(self.dictionary, self.user, database=self.database, conf=self.conf,
                      rand=random_mock)
 
         # Then
@@ -111,7 +111,7 @@ class ChooseRythmNotationExerciseTests(TestCase):
         self.database.get_random_well_known_word.return_value = translations[0]
 
         # When
-        result = rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf,
+        result = rythm_choice(self.dictionary, self.user, database=self.database, conf=self.conf,
                               rand=random_mock)
 
         # Then
@@ -125,9 +125,9 @@ class ChooseRythmNotationExerciseTests(TestCase):
         self.database.get_random_well_known_word.return_value = None
 
         # When
-        rythm_choice(self.user, self.dictionary, database=self.database, conf=self.conf,
+        rythm_choice(self.dictionary, self.user, database=self.database, conf=self.conf,
                      rand=random_mock)
 
         # Then
         self.database.get_ordered_scheduled_words_to_learn_before_date \
-            .assert_called_once_with(time_mock.return_value, self.user, self.dictionary)
+            .assert_called_once_with(time_mock.return_value, self.dictionary, self.user)
