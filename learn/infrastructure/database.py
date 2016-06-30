@@ -41,7 +41,7 @@ class Database:
 
     def get_random_well_known_word(self, dictionary_pk, user):
         now = timezone.now()
-        in_a_month = now.replace(month=now.month + 1)
+        in_a_month = now.replace(month=(now.month + 1) % 12)
         return Translation.objects \
             .filter(dictionary_id=dictionary_pk, rythmnotation__user=user,
                     rythmnotation__next_repetition__gt=in_a_month) \

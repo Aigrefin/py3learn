@@ -144,7 +144,24 @@ class DatabaseIntTests(TestCase):
         translation_due_a_month_later = Translation.objects.create(dictionary=self.dictionary, word_to_learn='hello',
                                                                    known_word='salut')
         self.now = timezone.now()
-        repetition_set_a_month_later = self.now.replace(month=self.now.month + 1, minute=self.now.minute + 1)
+        repetition_set_a_month_later = self.now.replace(month=(self.now.month + 1) % 12,
+                                                        minute=(self.now.minute + 1) % 60)
+        create_rythm_object(repetition_set_a_month_later, translation_due_a_month_later, self.user)
+
+        # When
+        result = self.database.get_random_well_known_word(self.dictionary, self.user)
+
+        # Then
+        self.assertEqual(result, translation_due_a_month_later)
+
+    @patch("learn.infrastructure.database.timezone.now")
+    def test_shouldReturnWord_EvenWhenMonthIsTheLastOfTheYear(self, now_mock):
+        # Given
+        translation_due_a_month_later = Translation.objects.create(dictionary=self.dictionary, word_to_learn='hello',
+                                                                   known_word='salut')
+        now_mock.return_value = timezone.make_aware(datetime(2016, 12, 8, 15, 16, 23, 42))
+        repetition_set_a_month_later = self.now.replace(month=(self.now.month + 1) % 12,
+                                                        minute=(self.now.minute + 1) % 60)
         create_rythm_object(repetition_set_a_month_later, translation_due_a_month_later, self.user)
 
         # When
