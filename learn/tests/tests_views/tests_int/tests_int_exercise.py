@@ -109,7 +109,7 @@ class ExerciseTests(TestCase):
                           response.content.decode('utf8'))
         self.assertInHTML('<div class="col s12"><b>Successes</b> : 3</div>',
                           response.content.decode('utf8'))
-        self.assertInHTML('<div class="col s12"><b>Next repetition</b> : 31 seconds from now</div>',
+        self.assertInHTML('<div class="col s12"><b>Next repetition</b> :<br> 31 seconds from now</div>',
                           response.content.decode('utf8'))
 
     def test_shouldNotContainWordSuccesses_WhenNotLoggedIn(self):
