@@ -1,3 +1,4 @@
+import logging
 import smtplib
 
 from django.conf import settings
@@ -21,15 +22,18 @@ def send_mail(subject, message, to):
     server.sendmail(from_address, to, formatted_message.encode('utf8'))
     server.quit()
 
-
 def send_mail_on_new_word(sender, send=send_mail, user_objects=User, **kwargs):
     users = list(user_objects.objects.filter(is_staff=False,is_superuser=False))
     recipients = list([user.email for user in users])
     translation = kwargs['instance']
-    send('New word : ' + str(translation.known_word),
-         get_template("learn/new_word_email.html").render(context={
-             'language': str(translation.dictionary.language),
-             'known_word': str(translation.known_word),
-             'word_to_learn': str(translation.word_to_learn)
-         }),
-         recipients)
+    try:
+        send('New word : ' + str(translation.known_word),
+            get_template("learn/new_word_email.html").render(context={
+                'language': str(translation.dictionary.language),
+                'known_word': str(translation.known_word),
+                'word_to_learn': str(translation.word_to_learn)
+            }),
+            recipients)
+    except smtplib.SMTPAuthenticationError as error:
+        logger = logging.getLogger(__name__)
+        logger.exception('smtp login failed')
